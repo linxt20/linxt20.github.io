@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search> 
+  
+  
+    
+    <entry>
+      <title>front_matter</title>
+      <link href="/2022/09/07/front_matter/"/>
+      <url>/2022/09/07/front_matter/</url>
+      
+        <content type="html"><![CDATA[<p>Page Front-matter 用於頁面配置</p><table>    <tr>        <th width="100px">content</th>        <th>introduction</th>    </tr>    <tr>        <td>title</td>        <td>【必需】頁面標題</td>    </tr>    <tr>        <td>date</td>        <td>【必需】頁面創建日期</td>    </tr>    <tr>        <td>type</td>        <td>【必需】標籤、分類和友情鏈接三個頁面需要配置</td>    </tr>    <tr>        <td>updated</td>        <td>【可選】頁面更新日期</td>    </tr>    <tr>        <td>description</td>        <td>【可選】頁面描述</td>    </tr>    <tr>        <td>keywords</td>        <td>【可選】頁面關鍵字</td>    </tr>    <tr>        <td>comments</td>        <td>【可選】顯示頁面評論模塊(默認 true)</td>    </tr>    <tr>        <td>top_img</td>        <td>【可選】頁面頂部圖片</td>    </tr>    <tr>        <td>mathjax</td>        <td>【可選】顯示mathjax(當設置mathjax的per_page: false時，才需要配置，默認 false)</td>    </tr>    <tr>        <td>katex</td>        <td>【可選】顯示katex(當設置katex的per_page: false時，才需要配置，默認 false)</td>    </tr>    <tr>        <td>aside</td>        <td>【可選】顯示側邊欄 (默認 true)</td>    </tr>    <tr>        <td>aplayer</td>        <td>【可選】在需要的頁面加載aplayer的js和css,請參考文章下面的音樂 配置</td>    </tr>    <tr>        <td>highlight_shrink</td>        <td>【可選】配置代碼框是否展開(true/false)(默認為設置中highlight_shrink的配置)</td>    </tr></table>        <p>Post Front-matter 用於文章頁配置</p><table>    <tr>        <th width="100px">content</th>        <th>introduction</th>    </tr>        <tr>        <td>sticky</td>        <td>【可選】把這篇文章置頂。數值越大，置頂的優先級越大</td>    </tr>    <tr>        <td>title</td>        <td>【必需】文章標題</td>    </tr>    <tr>        <td>date</td>        <td>【必需】文章創建日期</td>    </tr>    <tr>        <td>tags</td>        <td>【可選】文章標籤</td>    </tr>    <tr>        <td>categories</td>        <td>【可選】文章分類</td>    </tr>    <tr>        <td>updated</td>        <td>【可選】文章更新日期</td>    </tr>    <tr>        <td>description</td>        <td>【可選】頁面描述</td>    </tr>    <tr>        <td>keywords</td>        <td>【可選】頁面關鍵字</td>    </tr>    <tr>        <td>top_img</td>        <td>【可選】文章頂部圖片</td>    </tr>    <tr>        <td>comments</td>        <td>【可選】顯示頁面評論模塊(默認 true)</td>    </tr>    <tr>        <td>top_img</td>        <td>【可選】頁面頂部圖片</td>    </tr>    <tr>        <td>cover</td>        <td>【可選】文章縮略圖(如果沒有設置top_img,文章頁頂部將顯示縮略圖，可設為false/圖片地址/留空)</td>    </tr>    <tr>        <td>toc</td>        <td>【可選】顯示文章TOC(默認為設置中toc的enable配置)</td>    </tr>    <tr>        <td>toc_number</td>        <td>【可選】顯示toc_number(默認為設置中toc的number配置) </td>    </tr>    <tr>        <td>toc_style_simple</td>        <td>【可選】顯示 toc 簡潔模式</td>    </tr>    <tr>        <td>copyright</td>        <td>【可選】顯示文章版權模塊(默認為設置中post_copyright的enable配置),转载文章可以单独设置false</td>    </tr>    <tr>        <td>copyright_author</td>        <td>【可選】文章版權模塊的文章作者</td>    </tr>    <tr>        <td>copyright_author_href</td>        <td>【可選】文章版權模塊的文章作者鏈接</td>    </tr>    <tr>        <td>copyright_url</td>        <td>【可選】文章版權模塊的文章連結鏈接</td>    </tr>    <tr>        <td>copyright_info</td>        <td>【可選】文章版權模塊的版權聲明文字</td>    </tr>    <tr>        <td>mathjax</td>        <td>【可選】顯示mathjax(當設置mathjax的per_page: false時，才需要配置，默認 false)</td>    </tr>    <tr>        <td>katex</td>        <td>【可選】顯示katex(當設置katex的per_page: false時，才需要配置，默認 false)</td>    </tr>    <tr>        <td>aside</td>        <td>【可選】顯示側邊欄 (默認 true)</td>    </tr>    <tr>        <td>aplayer</td>        <td>【可選】在需要的頁面加載aplayer的js和css,請參考文章下面的音樂 配置</td>    </tr>    <tr>        <td>highlight_shrink</td>        <td>【可選】配置代碼框是否展開(true/false)(默認為設置中highlight_shrink的配置)</td>    </tr>    <tr>        <td>decode</td>        <td>【可選】版权链接显示，默認對網址進行解碼，以至於如果是中文網址，會被解碼，可設置true來顯示中文網址。</td>    </tr></table><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 数值为3，表示指定显示3，数字为-1表示没有预先指定，没有数字表示默认显示第一个--&gt;</span></span><br><span class="line">&#123;% tabs test2, 3 %&#125;</span><br><span class="line"><span class="comment">&lt;!-- tab --&gt;</span></span><br><span class="line">**This is Tab 1.**</span><br><span class="line"><span class="comment">&lt;!-- endtab --&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- tab --&gt;</span></span><br><span class="line">**This is Tab 2.**</span><br><span class="line"><span class="comment">&lt;!-- endtab --&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- tab --&gt;</span></span><br><span class="line">**This is Tab 3.**</span><br><span class="line"><span class="comment">&lt;!-- endtab --&gt;</span></span><br><span class="line">&#123;% endtabs %&#125;</span><br></pre></td></tr></table></figure>标签外挂top_img图片选择设置搜索操作文章内容打理]]></content>
+      
+      
+      <categories>
+          
+          <category> 技术 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> hexo </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>我的第一篇博客文章</title>
+      <link href="/2022/09/04/my_first_blog/"/>
+      <url>/2022/09/04/my_first_blog/</url>
+      
+        <content type="html"><![CDATA[<h2 id="第一章"><a href="#第一章" class="headerlink" title="第一章"></a>第一章</h2><p>内容</p><hr><h2 id="第二章"><a href="#第二章" class="headerlink" title="第二章"></a>第二章</h2><div class="tabs" id="test1"><ul class="nav-tabs"><li class="tab active"><button type="button" data-href="#test1-1">test1 1</button></li><li class="tab"><button type="button" data-href="#test1-2">test1 2</button></li><li class="tab"><button type="button" data-href="#test1-3">test1 3</button></li></ul><div class="tab-contents"><div class="tab-item-content active" id="test1-1"><p><strong>This is Tab 1.</strong></p><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="test1-2"><p><strong>This is Tab 2.</strong></p><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="test1-3"><p><strong>This is Tab 3.</strong></p><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div></div>]]></content>
+      
+      
+      <categories>
+          
+          <category> test </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> test </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Hello World</title>
+      <link href="/2022/09/04/hello-world/"/>
+      <url>/2022/09/04/hello-world/</url>
+      
+        <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> test </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> test </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+  
+  
+</search>
