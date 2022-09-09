@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>在使用vscode的git管理界面后还需要了解的部分git基础指令</title>
+      <link href="/2022/09/09/gitknowledge/"/>
+      <url>/2022/09/09/gitknowledge/</url>
+      
+        <content type="html"><![CDATA[<div class="note info modern"><p>这部分只是记录作者自己不大熟练的git指令操作，如果需要详细的git操作教程，请自行百度</p></div><h1 id="基础操作"><a href="#基础操作" class="headerlink" title="基础操作"></a>基础操作</h1><p>几个基础的指令就不写了<br>一个基础知识：pull &#x3D; fetch + merge</p><p>clone add commit push pull 这几个指令使用vscode的git界面进行操作更加方便快速</p><h1 id="版本跳跃"><a href="#版本跳跃" class="headerlink" title="版本跳跃"></a>版本跳跃</h1><p>vscode的git似乎在版本回退上操作不大方便，可能是我不大会使用，这里直接记录版本跳跃的git指令</p><p>git reflog 查看所有的版本索引号<br>git reset –hard 版本索引号，可以前进也可以回退 </p><h1 id="版本比较"><a href="#版本比较" class="headerlink" title="版本比较"></a>版本比较</h1><p>vscode的版本比较的直观，但是似乎没法将本地库中的历史版本与当前版本进行比较，这里记录一下</p><p>git diff [文件名] 将工作区中的文件和暂存区进行比较<br>git diff [本地库中的历史版本] [文件名] 将工作区中的文件与本地库历史记录比较<br>不指定文件名将会将工作区的所有文件都进行比较</p><h1 id="分支操作"><a href="#分支操作" class="headerlink" title="分支操作"></a>分支操作</h1><p>vscode的git管理界面能够查看创建以及切换分支</p><p>如果在git bash中则使用一下指令<br>git branch -v 查看所有的分支以及当前在哪个分支上<br>git branch [分支名称] 创建新的分支<br>git checkout [分支名称] 切换到目标分支<br>git checkout -b [分支名称] 创建并切换到目标分支<br>git merge [分支名称] 将目标分支合并到当前所在的分支上 如果出现冲突，需要修改之后，add后commit</p><h1 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h1><p>这部分第一次学习，做一个记录，平时似乎很少用到</p><h2 id="创建标签"><a href="#创建标签" class="headerlink" title="创建标签"></a>创建标签</h2><p>git tag <name> 给当前的分支附上标签名<br>git tag -a <name> -m “introduction” 附上标签名的同时加上描述，描述在git show展示<br>git tag 查看所有的标签<br>git tag <name> <id> 给id分支附上标签名<br>git show <tagname> 查看tagname标签的信息</p><h2 id="标签操作"><a href="#标签操作" class="headerlink" title="标签操作"></a>标签操作</h2><p>命令git push origin <tagname>可以推送一个本地标签；</p><p>命令git push origin –tags可以推送全部未推送过的本地标签；</p><p>命令git tag -d <tagname>可以删除一个本地标签；</p><p>命令git push origin :refs&#x2F;tags&#x2F;<tagname>可以删除一个远程标签。</p><h1 id="远程仓库"><a href="#远程仓库" class="headerlink" title="远程仓库"></a>远程仓库</h1><h2 id="邀请队友"><a href="#邀请队友" class="headerlink" title="邀请队友"></a>邀请队友</h2><p>github项目仓库的setting中cooperation，输入队友账号即可</p><h2 id="跨团队协作"><a href="#跨团队协作" class="headerlink" title="跨团队协作"></a>跨团队协作</h2><p>fork队员在pull request中点击new pull request,created pull request,view pull request<br>项目队长在pull request中点击目标request<br>(团队间直接在github赋予权限就可以直接clone和pull、push)</p><h2 id="白名单"><a href="#白名单" class="headerlink" title="白名单"></a>白名单</h2><p>.gitignore<br>常见白名单：<br>图片文件缩略图文件 *.ini<br>python文件的编译文件 *.py[cod] *.so *.egg *.egg-info dist build</p><p>git check-ignore -v App.class<br>检查指定文件是由于哪行规则而进入白名单的</p><p>不排除.gitignore和App.class的白名单写法:<br>!.gitignore<br>!App.class</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 技术 </category>
+          
+          <category> git </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> git </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>hexo butterfly中使用Font Awesome V5的icon图标</title>
       <link href="/2022/09/08/how_to_use_icon/"/>
       <url>/2022/09/08/how_to_use_icon/</url>
