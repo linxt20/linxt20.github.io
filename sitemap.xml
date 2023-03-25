@@ -2,6 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://linxt20.github.io/2022/09/12/gitknowledge/</loc>
+    
+    <lastmod>2023-03-25</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://linxt20.github.io/2023/03/25/solution-github-push/</loc>
+    
+    <lastmod>2023-03-25</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://linxt20.github.io/2023/03/25/the_order_of_hexo/</loc>
     
     <lastmod>2023-03-24</lastmod>
@@ -14,15 +32,6 @@
     <loc>https://linxt20.github.io/2022/09/23/the_note_of_makefile/</loc>
     
     <lastmod>2022-09-23</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://linxt20.github.io/2022/09/12/gitknowledge/</loc>
-    
-    <lastmod>2022-09-18</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -135,17 +144,17 @@
     <priority>0.2</priority>
   </url>
   
-
-  
   <url>
-    <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/</loc>
+    <loc>https://linxt20.github.io/tags/%E4%BB%A3%E7%90%86/</loc>
     <lastmod>2023-03-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
+
+  
   <url>
-    <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/makefile/</loc>
+    <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/</loc>
     <lastmod>2023-03-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -160,6 +169,13 @@
   
   <url>
     <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/hexo/</loc>
+    <lastmod>2023-03-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/makefile/</loc>
     <lastmod>2023-03-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
