@@ -1,0 +1,439 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>android studio 安卓移动应用开发学习笔记 | Drenj7's blog</title><meta name="keywords" content="android"><meta name="author" content="狄仁杰七号"><meta name="copyright" content="狄仁杰七号"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="这是我在B站自学android studio工具开发的学习笔记，记录了一些基础知识和自己总结的技巧">
+<meta property="og:type" content="article">
+<meta property="og:title" content="android studio 安卓移动应用开发学习笔记">
+<meta property="og:url" content="https://linxt20.github.io/2023/04/10/android-studio-%E5%AE%89%E5%8D%93%E7%A7%BB%E5%8A%A8%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Drenj7&#39;s blog">
+<meta property="og:description" content="这是我在B站自学android studio工具开发的学习笔记，记录了一些基础知识和自己总结的技巧">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://github.com/linxt20/blog_img/blob/master/cover/cover07.jpg?raw=true">
+<meta property="article:published_time" content="2023-04-10T14:06:55.000Z">
+<meta property="article:modified_time" content="2023-04-10T14:15:08.541Z">
+<meta property="article:author" content="狄仁杰七号">
+<meta property="article:tag" content="android">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/linxt20/blog_img/blob/master/cover/cover07.jpg?raw=true"><link rel="shortcut icon" href="/img/Drenj7icon.png"><link rel="canonical" href="https://linxt20.github.io/2023/04/10/android-studio-%E5%AE%89%E5%8D%93%E7%A7%BB%E5%8A%A8%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":200},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: 狄仁杰七号","link":"链接: ","source":"来源: Drenj7's blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'android studio 安卓移动应用开发学习笔记',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-04-10 22:15:08'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/Drenj7avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">7</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/pinacotheca/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://github.com/linxt20/blog_img/blob/master/cover/cover07.jpg?raw=true')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Drenj7's blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/pinacotheca/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">android studio 安卓移动应用开发学习笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-04-10T14:06:55.000Z" title="发表于 2023-04-10 22:06:55">2023-04-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-04-10T14:15:08.541Z" title="更新于 2023-04-10 22:15:08">2023-04-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%AC%94%E8%AE%B0/">笔记</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%AC%94%E8%AE%B0/android/">android</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>13分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="android studio 安卓移动应用开发学习笔记"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>{ % note info modern% }<br>这篇学习笔记主要基于B站up主<code>Android开发进阶</code>的<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Gq4y1G7Ke/?spm_id_from=333.999.0.0">教学视频</a>，同时作者也在其中加入了自己的一些心得理解与技巧总结<br>{ % endnote % }</p>
+<h2 id="第一章-控件"><a href="#第一章-控件" class="headerlink" title="第一章 控件"></a>第一章 控件</h2><p>1、TextView</p>
+<ul>
+<li><p>基础属性：</p>
+<ul>
+<li>layout_width:组件的宽度 单位是dp</li>
+<li>layout_margintop:距离上面的组件的距离</li>
+<li>layout_height:组件的高度</li>
+<li>id:为控件设置一个id，可以在java文件当中使用 控件 varname &#x3D; findviewbyid(R.id.xxx)的方式获取控件</li>
+<li>text:控件显示的文本内容</li>
+<li>textColor:控件文本的颜色设置，总共八位，前两位为透明度，3-4位是红色，5-6位是绿色，7-8位是蓝色</li>
+<li>textStyle:设置字体风格，默认normal，可选bold(加粗)，italic(斜体)</li>
+<li>textSize: 设置字体大小 单位是sp</li>
+<li>background: 设置控件的背景，可以设置颜色(八位数字)，也可以设置图片、xml等</li>
+<li>backgroundTint: 设置控件的背景的颜色，可以给原有的图标背景上色，只具有着色功能</li>
+<li>foreground: 设置控件的前景，注意会覆盖text</li>
+<li>gravity: 设置控件中内容的位置，可选center_horizontal,center,center_vertical,bottom,right,clip_horizontal,clip_vertical,end,fill,fill_horizontal,fill_vertical,left等</li>
+</ul>
+</li>
+<li><p>阴影属性:(需要四个一起配合使用)</p>
+<ul>
+<li>shadowColor: 设置阴影的颜色</li>
+<li>shadowRadius: 设置阴影的模糊宽度，一般选择3.0</li>
+<li>shadowDx: 设置阴影在水平方向的偏移度</li>
+<li>shadowDy: 设置阴影在竖直方向的偏移度</li>
+</ul>
+</li>
+<li><p>跑马灯效果(内容需要超出width)</p>
+<ul>
+<li>singleline:内容单行显示(超出部分内容显示省略号)</li>
+<li>focusable:是否可以获取焦点(在有焦点的情况下运行)</li>
+<li>focusableInTouchMode:触摸状态下是否可以聚焦</li>
+<li>ellipsize:在哪里省略文本(显示省略号的位置或者没有省略号)</li>
+<li>marqueeRepeatUmit:字幕动画重复的次数</li>
+</ul>
+</li>
+</ul>
+<p>2、Button空间</p>
+<ul>
+<li>基础属性<ul>
+<li>button的类实现是继承于TextView的，因此TextView的属性button都有</li>
+</ul>
+</li>
+<li>三个点击属性：<ul>
+<li>执行顺序：点击按钮，触发touch 进入，longclick，移动触发 touch 移动，放开按钮 触发 touch 离开，click</li>
+<li>当ontouch返回true的时候，longclick和click都不会执行；当longclick返回true的时候，ontouch会执行，而click不会执行<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 按钮绑定点击函数方式1</span></span><br><span class="line"><span class="type">Button</span> <span class="variable">btn</span> <span class="operator">=</span> findviewbyid(R.id.btn);</span><br><span class="line"><span class="comment">// 点击事件</span></span><br><span class="line">btn.setonclicklisterner(<span class="keyword">new</span> <span class="title class_">View</span>.onclicklisterner()&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onclick</span><span class="params">(view v)</span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 长按事件</span></span><br><span class="line">btn.setonlongclicklisterner(<span class="keyword">new</span> <span class="title class_">View</span>.onlongclicklisterner()&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">onlongclick</span><span class="params">(view v)</span>&#123;</span><br><span class="line">    </span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 触摸事件，分为三个事件，进入、移动、出去，都会触发ontouch</span></span><br><span class="line">btn.setontouchlisterner(<span class="keyword">new</span> <span class="title class_">View</span>.ontouchlisterner()&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">ontouch</span><span class="params">(view v,motionevent event)</span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 按钮绑定点击函数方式2</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// button控件的属性中加入onclick:&quot;clickfunction&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 随后在mainactivity.java文件当中定义 `public void clickfunction(view v)`函数，即可等效上面的绑定操作</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<p>3、draw资源文件</p>
+<ul>
+<li>创建一个新的draw，在drawable文件夹右键新建一个资源文件，资源文件默认是sector标签作为根的，给其中加上内容就需要使用item标签</li>
+<li>一个item中可以使用属性:<ul>
+<li>color:颜色(一般颜色选择器会重新创建一个文件夹) 常用于设置控件的backgroundTint属性</li>
+<li>drawable:引用的Drawable位图，注意不能是颜色   常用于设置控件的background属性</li>
+<li>state_focused:是否获得焦点</li>
+<li>state_pressed:控件是否被按下</li>
+<li>state_enabled:控件是否可用</li>
+<li>state_selected:控件是否被选择,针对有滚轮的情况</li>
+<li>state_checked:控件是否被勾选</li>
+<li>state_checkable:控件可否被勾选,eg:checkbox</li>
+</ul>
+</li>
+<li>简单的例子: <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">item</span> <span class="attr">android:drawable</span>=<span class="string">&quot;@drawable/xx1&quot;</span> <span class="attr">android:state_pressed</span>=<span class="string">&quot;true&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">item</span> <span class="attr">android:drawable</span>=<span class="string">&quot;@drawable/xx2&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>4、edittext</p>
+<ul>
+<li>基础属性<ul>
+<li>button的类实现是继承于TextView的，因此TextView的属性button都有</li>
+<li>hint: 输入提示文本</li>
+<li>textcolorhint: 提示文本的颜色</li>
+<li>inputtype: 输入的类型</li>
+<li>drawableleft&#x2F;drawableright: 输入框指定方位添加图片</li>
+<li>drawablepadding: 图片与输入框之间的距离</li>
+<li>paddingleft&#x2F;right&#x2F;top&#x2F;bottom: 设置输入文本与输入框之间的距离</li>
+</ul>
+</li>
+<li>获取文本内容的方式: 先用findviewbyid找到edittext，然后用edittext的 .gettext().toString()操作即可</li>
+</ul>
+<p>5、 imageview</p>
+<ul>
+<li>基础属性:<ul>
+<li>src:设置图片资源</li>
+<li>scaleType:设置图片填充方式，fitstart&#x2F;center&#x2F;end(等比例缩放后放置于左上角&#x2F;中间&#x2F;右下角),fitXY(图片横纵方向适应imageview),center(保持原图的大小，显示在mageView的中心。当原图的size大于imageView的size，超过部分裁剪处理),centerCror(保持宽高比缩放图片，直到完全覆盖ImageView，可能会出现图片的显示不完全),centerInside(保持宽高比缩放图片，直到ImageView能够完全地显示图片),matrix(不改变原图的大小，从lmageView的左上角开始绘制原图，原图超过mageView的部分作裁剪处理)</li>
+<li>maxHeight: 最大高度</li>
+<li>maxWidth: 最大宽度</li>
+<li>adjustViewBounds: 调整View的界限,选择true就会按照前面的两个max来限制图片的大小</li>
+</ul>
+</li>
+</ul>
+<p>6、processbar</p>
+<ul>
+<li>基础属性(下面四个都不设置就是一个圆形的加载进度条)<ul>
+<li>max: 进度条的最大值</li>
+<li>process: 进度条已经完成的进度值</li>
+<li>indeterminate: 设置成true，进度条不精确显示进度</li>
+<li>style&#x3D;”?android:attr&#x2F;progressBarStyleHorizontal” 水平进度条 (需要同时加上max的设置)</li>
+</ul>
+</li>
+<li>设置显示和隐藏<ul>
+<li>点击函数 public void onclick(view v)</li>
+<li>获取显示状态 getVisibility() 值为 v.GONE 和 v.VISIBLE</li>
+<li>设置显示状态 setVisibility(v.GONE) setVisibility(v.VISIVLE)</li>
+</ul>
+</li>
+<li>设置进度条进度<ul>
+<li>获取当前进度条进度 getProcess() 为int类型</li>
+<li>设置当前进度条进度 setProcess(10)</li>
+</ul>
+</li>
+</ul>
+<p>7、notification和notificationmanager</p>
+<ul>
+<li>通知渠道的重要性可选项如下：<ul>
+<li>IMPORTANCE_NONE 关闭通知</li>
+<li>IMPORTANCE_MIN 开启通知，不会弹出，但没有提示音，状态栏中无显示</li>
+<li>IMPORTANCE_LOW 开启通知，不会弹出，不发出提示音，状态栏中显示</li>
+<li>IMPORTANCE_DEFAULT 开启通知，不会弹出，发出提示音，状态栏中显示</li>
+<li>IMPORTANCE_HIGH 开启通知，会弹出，发出提示音，状态栏中显示</li>
+</ul>
+</li>
+<li>通知的常见设置：<ul>
+<li>setContentTitle(String string) 设置标题 *这个是必须设置的</li>
+<li>setContentText(String string) 设置文本内容 *这个是必须设置的</li>
+<li>setSmallcon(int icon) 设置小图标 *这个是必须设置的</li>
+<li>setLargelcon(Bitmap icon) 设置通知的大图标</li>
+<li>setColor(int argb) 设置小图标的颜色</li>
+<li>setContentIntent(PendingIntent intent)设置点击通知后的跳转意图</li>
+<li>setAutoCancel(boolean boolean) 设置点击通知后自动清除通知</li>
+<li>setWhen(long when) 设置通知被创建的时间<br>相关代码如下:<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">NotificationManager</span> <span class="variable">manager</span> <span class="operator">=</span> (NotificationManager) getSystermService (NOTIFICATION_SERVICE); <span class="comment">// 创建一个notificationmanager实例</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.o)&#123;<span class="comment">// 版本大于8.0的就需要设置通知渠道，渠道的id和使用时候需要保持一致</span></span><br><span class="line">  <span class="type">NotificationChannal</span> <span class="variable">channal</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">NotificationChannal</span>(id:<span class="string">&quot;test&quot;</span>,name:<span class="string">&quot;notificationtest&quot;</span>,importance:<span class="string">&quot;NotificationManager.IMPORTANCE_HIGH&quot;</span>);</span><br><span class="line">  manager.createNotificationChannal(channal);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">Intent</span> <span class="variable">intent</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Intent</span>(<span class="built_in">this</span>,Notificationactivity.class);</span><br><span class="line"></span><br><span class="line"><span class="type">PendingIntent</span> <span class="variable">pendingintent</span> <span class="operator">=</span> PendingIntent.getActivity(<span class="built_in">this</span>,<span class="number">0</span>,intent,<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="type">Notification</span> <span class="variable">notification</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">NotificationCompat</span>.Builder(<span class="built_in">this</span>,channalId:<span class="string">&quot;test&quot;</span>)</span><br><span class="line">                            .setContentTitle(<span class="string">&quot;官方通知&quot;</span>)</span><br><span class="line">                            .setContentText(<span class="string">&quot;test&quot;</span>)</span><br><span class="line">                            .setSmallcon(R.drawable.xxxicon)<span class="comment">// 注意这个地方必须是icon图标，而不是图片</span></span><br><span class="line">                            .setLargelcon(BitmapFactory.decodeResource(getResources(),R.drawable.xxx))<span class="comment">// 这个地方使用图片进行转换格式</span></span><br><span class="line">                            .setColor(Color.parseColor(<span class="string">&quot;#ff0000&quot;</span>)) <span class="comment">//设置小图标的颜色</span></span><br><span class="line">                            .setContentIntent(pendingintent) <span class="comment">// 点击通知回到应用</span></span><br><span class="line">                            .setAutoCancel(<span class="literal">true</span>) <span class="comment">// 点击通知后，通知自动消失</span></span><br><span class="line">                            .build();</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">sendnotification</span><span class="params">(view v)</span>&#123;</span><br><span class="line">  manager.notify(id:<span class="string">&#x27;1&#x27;</span>,notification);<span class="comment">// 点击发送通知函数</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">cancelnotification</span><span class="params">(view v)</span>&#123;</span><br><span class="line">  manager.cancel(id:<span class="string">&#x27;1&#x27;</span>,notification);<span class="comment">// 需要注意这个id必须要是一样的</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<p>8、toolbar</p>
+<ul>
+<li>toolbar是指app的标题栏,但是app原有的样式中就已经有一个标题栏是actionbar，如果要使用toolbar替换actionbar，需要在res&#x2F;values文件夹中把themes.xml中style的parent从Theme.MarterialComponents.DayNight.DarkActionBar修改为Theme.MarterialComponents.DayNight.NoActionBar</li>
+<li>在activity_main.xml中使用toolbar，需要注意应该使用的是androidx.appcompat.widget.Toolbar而不是Toolbar</li>
+<li>需要注意toolbar在java文件中自动导包的时候，需要注意不是import android.widget.Toolbar 而是 import androidx.appcompat.widget.Toolbar</li>
+<li>toolbar的layout_width为match_parent，layout_height &#x3D; “?attr&#x2F;actionBarSize”表示和原来的actionbar一样高</li>
+<li>基础属性(需要注意下面这些属性开头是app:而不是android:，因为这个用的不是android自带的toolbar)<ul>
+<li>navigationIcon:设置icon图标，常用于设置返回箭头icon图标,点击监控函数需要只用 name.setNavigaionOnClickListener(new View.OnClickListener(){ @override public void onclick(view v){ } });</li>
+<li>title:主标题</li>
+<li>titleTextColor:主标题的颜色</li>
+<li>titleMarginStart:设置标题距离左边的距离</li>
+<li>subtitle:子标题(在主标题下面，字体小一点)</li>
+<li>subtitleTextColor:子标题的颜色</li>
+<li>logo:也是一个图标 toolbar从左到右为navigationIcon logo title</li>
+</ul>
+</li>
+</ul>
+<p>9、alertdialog</p>
+<ul>
+<li>创建alertdialog的代码如下,可用于点击函数当中<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">democlick</span><span class="params">(view v)</span>&#123;</span><br><span class="line">  <span class="type">View</span> <span class="variable">dialogView</span> <span class="operator">=</span> getLayoutInflater().inflate(R.layout.dialog_view,<span class="literal">null</span>); <span class="comment">// 将layout布局转变为视图</span></span><br><span class="line"></span><br><span class="line">  AlertDialog.<span class="type">Builder</span> <span class="variable">builder</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AlertDialog</span>.Builder(<span class="built_in">this</span>);</span><br><span class="line">  builder.setIcon(R.drawable.xxx)</span><br><span class="line">         .setTitle(<span class="string">&quot;xxx&quot;</span>)</span><br><span class="line">         .setMessage(<span class="string">&quot;xxx&quot;</span>)</span><br><span class="line">         .setPositiveButton(text:<span class="string">&quot;确定&quot;</span>，<span class="keyword">new</span> <span class="title class_">DialogInterface</span>.OnClickListener()&#123;</span><br><span class="line">           <span class="meta">@override</span></span><br><span class="line">           <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onClick</span><span class="params">(DialogInterface dialog,<span class="type">int</span> which)</span>&#123;</span><br><span class="line"></span><br><span class="line">           &#125;</span><br><span class="line">         &#125;)</span><br><span class="line">         .setNegativeButton(text:<span class="string">&quot;取消&quot;</span>，<span class="keyword">new</span> <span class="title class_">DialogInterface</span>.OnClickListener()&#123;</span><br><span class="line">           <span class="meta">@override</span></span><br><span class="line">           <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onClick</span><span class="params">(DialogInterface dialog,<span class="type">int</span> which)</span>&#123;</span><br><span class="line"></span><br><span class="line">           &#125;</span><br><span class="line">         &#125;)</span><br><span class="line">         .setNeutralButton(text:<span class="string">&quot;中间&quot;</span>，<span class="keyword">new</span> <span class="title class_">DialogInterface</span>.OnClickListener()&#123;</span><br><span class="line">           <span class="meta">@override</span></span><br><span class="line">           <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onClick</span><span class="params">(DialogInterface dialog,<span class="type">int</span> which)</span>&#123;</span><br><span class="line"></span><br><span class="line">           &#125;</span><br><span class="line">         &#125;)</span><br><span class="line">         .setView(dialogview)</span><br><span class="line">         .create()</span><br><span class="line">         .show();<span class="comment">// 需要注意最后两个必须是create()和show()且顺序不能换，这是由函数的返回值决定的，因为show是AlertDialog的一个函数，而create函数的返回值是AlertDialog类型，其他的set的操作的返回值是builder类型。还需要注意点击函数的监听函数是DialogInterface.OnClickListener,设置视图的显示位置在dialog的中间内容的位置</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>10、PopupWindow</p>
+<ul>
+<li>创建alertdialog的代码如下,可用于点击函数当中<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">democlick</span><span class="params">(view v)</span>&#123;</span><br><span class="line">  <span class="type">View</span> <span class="variable">popupView</span> <span class="operator">=</span> getLayoutInflater().inflate(R.layout.dialog_view,<span class="literal">null</span>); <span class="comment">// 将layout布局转变为视图</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 获取自己写的视图的元素</span></span><br><span class="line">  <span class="type">Button</span> <span class="variable">btn1</span> <span class="operator">=</span> popupView.findViewById(R.id.btn1);<span class="comment">// 点击函数易操作</span></span><br><span class="line">  <span class="comment">// 可以在点击函数中使用popupwindow.dismiss() 关闭弹窗</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">//PopupWindow的构造方法有很多种，可以new PopupWindow无参、一个参、两个参、三个参、四个参</span></span><br><span class="line">  <span class="type">PopupWindow</span> <span class="variable">popupwindow</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">PopupWindow</span>(View:popupView,width:ViewGroup.LayoutParams.WRAP_CONTENT,height:ViewGroup.LayoutParams.WRAP_CONTENT,focusable:<span class="literal">true</span>);<span class="comment">//这里的宽和高也可以设置数字，还可以设置MATCH_PARENT,这里的四个参数都可以用setxx来单独设置，focusable的作用是点击空白处会</span></span><br><span class="line">  popupwindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.xxx));</span><br><span class="line">  popupwindow.showAsDropDown(view);<span class="comment">// 显示位置，可加上参数，横向距离view.getWidth()，和纵向距离view.getHeight()</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>其他设置函数<ul>
+<li>setAnimationStyle(int animationStyle) 设置加载动画</li>
+<li>setTouchable(boolean touchable) 设置触摸</li>
+<li>setOutsideTouchable(boolean touchable) 设置非popupwindow区域的触摸</li>
+</ul>
+</li>
+</ul>
+<h2 id="第二章-布局"><a href="#第二章-布局" class="headerlink" title="第二章 布局"></a>第二章 布局</h2><p>1、linearlayout</p>
+<ul>
+<li>常见属性<ul>
+<li>orientation 布局中组件的排列方式</li>
+<li>gravity 空间组件所包含的子元素的对齐方式，可以多个组合 例如 center_horizontal|bottom 设置水平居中对齐，同时与底边对齐</li>
+<li>layout_gravity 控制该组件在其父容器里面的对齐方式</li>
+<li>background 背景图、背景色</li>
+<li>divider 设置分割线的样式，常为一个分割线图片 单独设置没有效果，需要设置showDividers</li>
+<li>showDividers 设置分割线所在的位置 none 无 beginning 开始 end 结束 middle每两个组件之间</li>
+<li>dividerPadding 设置分割线的padding 简单的例子，当linearlayout设置为vertical的时候，这个时候的padding是指到左右边界的距离</li>
+<li>layout_weight 分配剩余区域占比权重 注意是在原有长度的基础上，增加分配剩余空间的占比;需要注意，如果其中有一个元素使用了match_parent，那么其他区域的权重将会失效，如果三个元素都用了match_parent，权重分别为2 1 1，此时剩余空间为 1-3 &#x3D; -2 那么权重为2的占据屏幕的比例是在原有的1的基础加上 -2*(2&#x2F;4) &#x3D; -1 也就是此时占比为0，其他两个可以同理计算得到0.5，也就是此时权重2的不显示，权重1的各占一半</li>
+</ul>
+</li>
+</ul>
+<p>2、relativelayout</p>
+<ul>
+<li>默认都是相对于父容器左上角开始布局</li>
+<li>常见属性<ul>
+<li>根据父容器定位 设置为true即为设置成功<ul>
+<li>layout_alignParentLeft 左对齐</li>
+<li>layout_alignParentRight 右对齐</li>
+<li>layout_alignParentTop 顶部对齐</li>
+<li>layout_alignParentButtom 底部对齐</li>
+<li>layout_centerHorizontal 水平居中</li>
+<li>layout_centerVertical 竖直居中</li>
+<li>layout_centerInParent 中间位置</li>
+</ul>
+</li>
+<li>根据兄弟组件定位 设置参考组件的id即可 简单的例子 <strong>如果目标组建的id&#x3D;“@+id&#x2F;xx” 那么设置参考组件的时候可以设置为 “@id&#x2F;xx”</strong><ul>
+<li>layout_toLeftOf 放置于参考组件的左边</li>
+<li>layout_toRightOf 放置于参考组件的右边</li>
+<li>layout_above 放置于参考组件的上方</li>
+<li>layout_below 放置于参考组件的下方</li>
+<li>layout_alignTop 对齐参考组件的上边界</li>
+<li>layout_alignBottom 对齐参考组件的下边界</li>
+<li>layout_alignLeft 对齐参考组件的左边界</li>
+<li>layout_alignRight 对齐参考组件的右边界</li>
+</ul>
+</li>
+<li>margin 设置组件和父容器的边距<ul>
+<li>layout_margin( &#x2F; Left &#x2F; Right &#x2F; Top &#x2F; Bottom) 上下左右偏移</li>
+</ul>
+</li>
+<li>padding 设置组件与内部元素的边距<ul>
+<li>layout_padding( &#x2F; Left &#x2F; Right &#x2F; Top &#x2F; Bottom) 上下左右偏移</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>3、framelayout(少用)</p>
+<ul>
+<li>这个布局是从左上角开始，按照组件定义的顺序依次画出相应组件，后画的会覆盖先画的</li>
+<li>常用属性：<ul>
+<li>foreground 前景色</li>
+<li>foregroundGrivity 前景色&#x2F;前景图的对齐位置</li>
+</ul>
+</li>
+</ul>
+<p>4、Tablelayout</p>
+<h2 id="终章-部分技巧"><a href="#终章-部分技巧" class="headerlink" title="终章 部分技巧"></a>终章 部分技巧</h2><p>1、在activity_main.xml中删除原有的代码，加上linearlayout，随后树屋width回车即可出现xmlns相关代码，使用ctrl+alt+L可以使xmlns的代码放在最上面。</p>
+<p>2、对于控件属性的取值，按住ctrl再去点击属性，即可跳转到属性取值的代码部分</p>
+<p>3、布局文件中的文本、颜色需要放在res资源文件下的values文件中的colors.xml和string.xml中设定，然后在布局文件中调用@string或者@color</p>
+<p>4、重写TextView:创建一个类，然后增加extends TextView,然后鼠标点击类名，点击create，选择需要重写的函数进行重写；在activity_main.xml中调用使用 重写textview的java文件的包名+文件名(不包含后缀),例如: com.enjoy.mytextview.mytextview</p>
+<p>5、在button控件中直接使用background设置button的背景色是不会成功的，这是因为版本更新之后出现的问题，需要在res资源文件夹下的values文件夹中的themes.xml中修改style的parent属性，在最后加上.Bridge后即可实现颜色修改。</p>
+<p>6、打印函数Log.e(TAG,”msg”); 程序运行之后在logcat中找到输出</p>
+<p>7、如果想要让toolbar标题居中，可以不设置title属性，直接在toolbar标签中间创建一个textview，给其layout_gravity属性设置为center即可</p>
+<p>8、layout_gravity属性和gravity属性的区别:gravity是控制一个视图内部的子元素如何相对于该视图进行对齐；layout_gravity确定一个视图或视图组件如何相对于其父视图进行对齐</p>
+<p>9、设置分割线，可以在元素中间加上如下的代码 <code>&lt;view android:background = &quot;#00ff00&quot; android:layout_width = &quot;match_parent&quot; android:height = &quot;1dp&quot; /&gt;</code></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://linxt20.github.io">狄仁杰七号</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://linxt20.github.io/2023/04/10/android-studio-%E5%AE%89%E5%8D%93%E7%A7%BB%E5%8A%A8%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">https://linxt20.github.io/2023/04/10/android-studio-%E5%AE%89%E5%8D%93%E7%A7%BB%E5%8A%A8%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://linxt20.github.io" target="_blank">Drenj7's blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/android/">android</a></div><div class="post_share"><div class="social-share" data-image="https://github.com/linxt20/blog_img/blob/master/cover/cover07.jpg?raw=true" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2023/03/25/solution-github-push/"><img class="next-cover" src="https://github.com/linxt20/blog_img/blob/master/cover/cover06.jpg?raw=true" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">解决gitpush指令不稳定提交问题</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/Drenj7avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">狄仁杰七号</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">7</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/linxt20"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">博主回归啦，开始努力更新，欢迎催更</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-%E6%8E%A7%E4%BB%B6"><span class="toc-number">1.</span> <span class="toc-text">第一章 控件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%B8%83%E5%B1%80"><span class="toc-number">2.</span> <span class="toc-text">第二章 布局</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%88%E7%AB%A0-%E9%83%A8%E5%88%86%E6%8A%80%E5%B7%A7"><span class="toc-number">3.</span> <span class="toc-text">终章 部分技巧</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/04/10/android-studio-%E5%AE%89%E5%8D%93%E7%A7%BB%E5%8A%A8%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="android studio 安卓移动应用开发学习笔记"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover07.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="android studio 安卓移动应用开发学习笔记"/></a><div class="content"><a class="title" href="/2023/04/10/android-studio-%E5%AE%89%E5%8D%93%E7%A7%BB%E5%8A%A8%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="android studio 安卓移动应用开发学习笔记">android studio 安卓移动应用开发学习笔记</a><time datetime="2023-04-10T14:06:55.000Z" title="发表于 2023-04-10 22:06:55">2023-04-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/03/25/solution-github-push/" title="解决gitpush指令不稳定提交问题"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover06.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="解决gitpush指令不稳定提交问题"/></a><div class="content"><a class="title" href="/2023/03/25/solution-github-push/" title="解决gitpush指令不稳定提交问题">解决gitpush指令不稳定提交问题</a><time datetime="2023-03-25T02:06:18.000Z" title="发表于 2023-03-25 10:06:18">2023-03-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/03/25/the_order_of_hexo/" title="hexo的常用指令笔记"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover05.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="hexo的常用指令笔记"/></a><div class="content"><a class="title" href="/2023/03/25/the_order_of_hexo/" title="hexo的常用指令笔记">hexo的常用指令笔记</a><time datetime="2023-03-24T16:46:41.000Z" title="发表于 2023-03-25 00:46:41">2023-03-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/09/23/the_note_of_makefile/" title="makefile基础内容学习笔记"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover04.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="makefile基础内容学习笔记"/></a><div class="content"><a class="title" href="/2022/09/23/the_note_of_makefile/" title="makefile基础内容学习笔记">makefile基础内容学习笔记</a><time datetime="2022-09-22T16:00:00.000Z" title="发表于 2022-09-23 00:00:00">2022-09-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/09/12/note_of_butter_in_hexo/" title="hexo的butterfly主题配置笔记"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover03.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="hexo的butterfly主题配置笔记"/></a><div class="content"><a class="title" href="/2022/09/12/note_of_butter_in_hexo/" title="hexo的butterfly主题配置笔记">hexo的butterfly主题配置笔记</a><time datetime="2022-09-12T15:40:12.540Z" title="发表于 2022-09-12 23:40:12">2022-09-12</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://github.com/linxt20/blog_img/blob/master/cover/cover07.jpg?raw=true')"><div id="footer-wrap"><div class="copyright">&copy;2021 - 2023 By 狄仁杰七号</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function addGitalkSource () {
+  const ele = document.createElement('link')
+  ele.rel = 'stylesheet'
+  ele.href= 'https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css'
+  document.getElementsByTagName('head')[0].appendChild(ele)
+}
+
+function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: 'a87b382d981e2f61ed82',
+      clientSecret: '5b37507de47d283cab4659111e11b1794c0e7451',
+      repo: 'linxt20.github.io',
+      owner: 'linxt20',
+      admin: ['linxt20'],
+      id: '92af263c655395f22a1e706a0085fae5',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    addGitalkSource()
+    getScript('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.innerHTML= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !true) {
+  if (true) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/fireworks.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body></html>
