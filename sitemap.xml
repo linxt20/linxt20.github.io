@@ -2,15 +2,6 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://linxt20.github.io/2023/04/19/%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90%E4%B8%8E%E9%AA%8C%E8%AF%81%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
-    
-    <lastmod>2023-04-19</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://linxt20.github.io/2023/04/10/android-studio-%E5%AE%89%E5%8D%93%E7%A7%BB%E5%8A%A8%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
     
     <lastmod>2023-04-19</lastmod>
@@ -169,13 +160,6 @@
     <priority>0.2</priority>
   </url>
   
-  <url>
-    <loc>https://linxt20.github.io/tags/%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90%E4%B8%8E%E9%AA%8C%E8%AF%81/</loc>
-    <lastmod>2023-04-19</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
 
   
   <url>
@@ -200,13 +184,6 @@
   </url>
   
   <url>
-    <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/android/</loc>
-    <lastmod>2023-04-19</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/%E5%89%8D%E5%90%8E%E7%AB%AF%E8%BF%9E%E6%8E%A5/</loc>
     <lastmod>2023-04-19</lastmod>
     <changefreq>weekly</changefreq>
@@ -214,14 +191,14 @@
   </url>
   
   <url>
-    <loc>https://linxt20.github.io/categories/%E7%AC%94%E8%AE%B0/</loc>
+    <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/android/</loc>
     <lastmod>2023-04-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://linxt20.github.io/categories/%E7%AC%94%E8%AE%B0/%E8%BD%AF%E4%BB%B6%E5%88%86%E6%9E%90%E4%B8%8E%E9%AA%8C%E8%AF%81/</loc>
+    <loc>https://linxt20.github.io/categories/%E7%AC%94%E8%AE%B0/</loc>
     <lastmod>2023-04-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
