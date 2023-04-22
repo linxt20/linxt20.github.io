@@ -174,7 +174,7 @@
   </url>
   
   <url>
-    <loc>https://linxt20.github.io/tags/butterfly/</loc>
+    <loc>https://linxt20.github.io/tags/icon/</loc>
     <lastmod>2023-04-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -188,14 +188,7 @@
   </url>
   
   <url>
-    <loc>https://linxt20.github.io/tags/icon/</loc>
-    <lastmod>2023-04-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://linxt20.github.io/tags/makefile/</loc>
+    <loc>https://linxt20.github.io/tags/butterfly/</loc>
     <lastmod>2023-04-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -208,17 +201,24 @@
     <priority>0.2</priority>
   </url>
   
+  <url>
+    <loc>https://linxt20.github.io/tags/makefile/</loc>
+    <lastmod>2023-04-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
 
   
   <url>
-    <loc>https://linxt20.github.io/categories/%E4%BD%9C%E4%B8%9A%E6%8C%87%E5%8D%97/</loc>
+    <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/</loc>
     <lastmod>2023-04-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/</loc>
+    <loc>https://linxt20.github.io/categories/%E4%BD%9C%E4%B8%9A%E6%8C%87%E5%8D%97/</loc>
     <lastmod>2023-04-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -232,14 +232,21 @@
   </url>
   
   <url>
-    <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/git/</loc>
+    <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/android/</loc>
     <lastmod>2023-04-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/android/</loc>
+    <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/%E5%89%8D%E5%90%8E%E7%AB%AF%E8%BF%9E%E6%8E%A5/</loc>
+    <lastmod>2023-04-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/git/</loc>
     <lastmod>2023-04-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -253,13 +260,6 @@
   </url>
   
   <url>
-    <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/makefile/</loc>
-    <lastmod>2023-04-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/superset/</loc>
     <lastmod>2023-04-22</lastmod>
     <changefreq>weekly</changefreq>
@@ -267,7 +267,7 @@
   </url>
   
   <url>
-    <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/%E5%89%8D%E5%90%8E%E7%AB%AF%E8%BF%9E%E6%8E%A5/</loc>
+    <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/makefile/</loc>
     <lastmod>2023-04-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
