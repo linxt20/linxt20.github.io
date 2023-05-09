@@ -4,6 +4,35 @@
   
     
     <entry>
+      <title>在windows上使用pycharm调试superset的配置</title>
+      <link href="/2023/05/09/superset-debug-windows-pycharm/"/>
+      <url>/2023/05/09/superset-debug-windows-pycharm/</url>
+      
+        <content type="html"><![CDATA[<div class="note info modern"><p>这篇文章的主要参考对象为一篇linux&#x2F;mac系统的配置<a href="https://medium.com/@jayakrishnan.karolil_46246/how-to-run-and-debug-apache-superset-using-pycharm-cdc308fc87b2">文章</a>，这篇文章将其配置迁移拟合到windows上</p></div><h2 id="前提准备"><a href="#前提准备" class="headerlink" title="前提准备"></a>前提准备</h2><ul><li>superset源码一份，直接从superset的github上pull即可</li><li>通过虚拟环境启动superset，参考我的另一篇博客——<a href="./superset-install-run.md">superset的安装与启动——虚拟环境与docker</a></li><li>pycharm工具，作者使用的是专业版(学生认证)</li><li>windows 10</li></ul><h2 id="配置流程"><a href="#配置流程" class="headerlink" title="配置流程"></a>配置流程</h2><ul><li>1、首先是打开pycharm，点击右上角的运行按钮左侧下拉框，选择<code>Edit Configurations</code><br><img src="https://github.com/linxt20/blog_img/blob/master/superset-debug-windows-pycharm/edit-config.jpg?raw=true" alt="进入编辑详情"></li><li>2、对于打开的配置界面，点击左上角的加号，在展开的列表里面找到python，点击<br><img src="https://github.com/linxt20/blog_img/blob/master/superset-debug-windows-pycharm/select-python.jpg?raw=true" alt="选择python配置"></li><li>3、<strong>对于打开的python配置页面，在第二行的script path的右侧有个小三角，点击后选择module name</strong>(这个是区别于linux&#x2F;mac操作系统的关键)<br><img src="https://github.com/linxt20/blog_img/blob/master/superset-debug-windows-pycharm/select-module.jpg?raw=true" alt="选择模块名"></li><li>4、将下面的参数填写到对应位置，依次点击<code>Apply</code>和<code>OK</code>即可<ul><li>Name:flask-server(这个名字是随意的)</li><li>Module name: flask</li><li>Parameters: run -p 8088 –with-threads –reload –debugger</li><li>Environment variables: PYTHONUNBUFFERED&#x3D;1;FLASK_APP&#x3D;superset;FLASK_ENV&#x3D;development</li><li>Python interpreter:这里选择你是用的python解释器即可<br><img src="https://github.com/linxt20/blog_img/blob/master/superset-debug-windows-pycharm/config-detail.jpg?raw=true" alt="配置详细图"></li></ul></li></ul><h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>作者在配置这个的时候，一开始看出了venv中linux和windows的不同，但是发现修改之后还是不正确，因为script path没法选中不是py后缀的flask.exe，我强行输入后运行也会报错；于是我查阅资料，看看有没有其他的方式，中间尝试过用flask_server(可以使用flask.exe)和terminal shell(可以处理flask启动superset的参数指令)来进行配置，但是都存在部分信息无法补充的情况。最后我无意中点击到了这个script path，发现它是可以选择module name的，参考前面在flask_server的时候就是选择module name的，于是选择了falsk,最后也是很顺利的打开了调试器。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 技术 </category>
+          
+          <category> 调试 </category>
+          
+          <category> superset </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> pycharm </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>iotdb学习踩坑记录</title>
       <link href="/2023/04/22/iotdb-learn-problem-list/"/>
       <url>/2023/04/22/iotdb-learn-problem-list/</url>
