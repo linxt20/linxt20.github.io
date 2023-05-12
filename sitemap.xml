@@ -20,15 +20,6 @@
   </url>
   
   <url>
-    <loc>https://linxt20.github.io/2023/04/14/superset-iotdb-connect/</loc>
-    
-    <lastmod>2023-05-12</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://linxt20.github.io/2023/05/09/superset-debug-windows-pycharm/</loc>
     
     <lastmod>2023-05-09</lastmod>
@@ -189,14 +180,14 @@
   </url>
   
   <url>
-    <loc>https://linxt20.github.io/tags/android/</loc>
+    <loc>https://linxt20.github.io/tags/iotdb/</loc>
     <lastmod>2023-05-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://linxt20.github.io/tags/andoird/</loc>
+    <loc>https://linxt20.github.io/tags/android/</loc>
     <lastmod>2023-05-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -210,14 +201,14 @@
   </url>
   
   <url>
-    <loc>https://linxt20.github.io/tags/hexo/</loc>
+    <loc>https://linxt20.github.io/tags/andoird/</loc>
     <lastmod>2023-05-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://linxt20.github.io/tags/icon/</loc>
+    <loc>https://linxt20.github.io/tags/hexo/</loc>
     <lastmod>2023-05-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -231,20 +222,6 @@
   </url>
   
   <url>
-    <loc>https://linxt20.github.io/tags/pycharm/</loc>
-    <lastmod>2023-05-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://linxt20.github.io/tags/iotdb/</loc>
-    <lastmod>2023-05-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://linxt20.github.io/tags/%E4%BB%A3%E7%90%86/</loc>
     <lastmod>2023-05-12</lastmod>
     <changefreq>weekly</changefreq>
@@ -252,7 +229,14 @@
   </url>
   
   <url>
-    <loc>https://linxt20.github.io/tags/superset/</loc>
+    <loc>https://linxt20.github.io/tags/icon/</loc>
+    <lastmod>2023-05-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://linxt20.github.io/tags/pycharm/</loc>
     <lastmod>2023-05-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -260,6 +244,13 @@
   
   <url>
     <loc>https://linxt20.github.io/tags/makefile/</loc>
+    <lastmod>2023-05-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://linxt20.github.io/tags/superset/</loc>
     <lastmod>2023-05-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -289,21 +280,7 @@
   </url>
   
   <url>
-    <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/hexo/</loc>
-    <lastmod>2023-05-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/android/</loc>
-    <lastmod>2023-05-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/%E8%B0%83%E8%AF%95/</loc>
     <lastmod>2023-05-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -317,7 +294,14 @@
   </url>
   
   <url>
-    <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/iotdb/</loc>
+    <loc>https://linxt20.github.io/categories/%E7%AC%94%E8%AE%B0/</loc>
+    <lastmod>2023-05-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://linxt20.github.io/categories/%E7%AC%94%E8%AE%B0/%E7%A7%BB%E5%8A%A8%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/</loc>
     <lastmod>2023-05-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -331,7 +315,21 @@
   </url>
   
   <url>
-    <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/superset/</loc>
+    <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/iotdb/</loc>
+    <lastmod>2023-05-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/hexo/</loc>
+    <lastmod>2023-05-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/%E8%B0%83%E8%AF%95/</loc>
     <lastmod>2023-05-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -345,28 +343,7 @@
   </url>
   
   <url>
-    <loc>https://linxt20.github.io/categories/iotdb/</loc>
-    <lastmod>2023-05-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://linxt20.github.io/categories/%E7%AC%94%E8%AE%B0/</loc>
-    <lastmod>2023-05-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://linxt20.github.io/categories/iotdb/%E8%BF%9E%E6%8E%A5%E5%99%A8/</loc>
-    <lastmod>2023-05-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://linxt20.github.io/categories/%E7%AC%94%E8%AE%B0/%E7%A7%BB%E5%8A%A8%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91/</loc>
+    <loc>https://linxt20.github.io/categories/%E6%8A%80%E6%9C%AF/superset/</loc>
     <lastmod>2023-05-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
