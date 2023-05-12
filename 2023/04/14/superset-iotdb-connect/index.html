@@ -1,0 +1,351 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>为superset添加iotdb连接器的实现 | Drenj7's blog</title><meta name="keywords" content="iotdb"><meta name="author" content="狄仁杰七号"><meta name="copyright" content="狄仁杰七号"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="这应该是作者在iotdb实验组的第一个实现的工作，记录一下整个实现流程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="为superset添加iotdb连接器的实现">
+<meta property="og:url" content="https://linxt20.github.io/2023/04/14/superset-iotdb-connect/index.html">
+<meta property="og:site_name" content="Drenj7&#39;s blog">
+<meta property="og:description" content="这应该是作者在iotdb实验组的第一个实现的工作，记录一下整个实现流程">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://github.com/linxt20/blog_img/blob/master/cover/cover11.jpg?raw=true">
+<meta property="article:published_time" content="2023-04-14T09:04:56.000Z">
+<meta property="article:modified_time" content="2023-05-12T09:46:59.175Z">
+<meta property="article:author" content="狄仁杰七号">
+<meta property="article:tag" content="iotdb">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/linxt20/blog_img/blob/master/cover/cover11.jpg?raw=true"><link rel="shortcut icon" href="/img/Drenj7icon.png"><link rel="canonical" href="https://linxt20.github.io/2023/04/14/superset-iotdb-connect/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":200},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":200,"languages":{"author":"作者: 狄仁杰七号","link":"链接: ","source":"来源: Drenj7's blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '为superset添加iotdb连接器的实现',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-05-12 17:46:59'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/Drenj7avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">15</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/pinacotheca/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://github.com/linxt20/blog_img/blob/master/cover/cover11.jpg?raw=true')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Drenj7's blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/pinacotheca/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">为superset添加iotdb连接器的实现</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-04-14T09:04:56.000Z" title="发表于 2023-04-14 17:04:56">2023-04-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-05-12T09:46:59.175Z" title="更新于 2023-05-12 17:46:59">2023-05-12</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/iotdb/">iotdb</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/iotdb/%E8%BF%9E%E6%8E%A5%E5%99%A8/">连接器</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>12分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="为superset添加iotdb连接器的实现"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>陈学长最近在做iotdb和superset的连接工作，实现效果大概是，对于superset前端接收到的操作，会传递给superset后端处理，superset随后将数据请求发送给iotdb的python客户端，python客户端与iotdb服务端交接数据后传输回superset后端，最后展现在superset前端上。其中superset与iotdb的python客户端之间的连接，参考superset官网对于与其连接数据库的要求——满足DBapi规范、sqlalchemy协议以及在superset中重载相应数据库引擎规范(也称为连接器)，相对应的，这个连接需要完成三个模块，其中DBapi和sqlalchemy两个模块陈学长已经完成，我主要是负责在前面工作的基础上，完成在superset中重载相应数据库引擎规范的部分内容。</p>
+<h2 id="主要参考资料"><a href="#主要参考资料" class="headerlink" title="主要参考资料"></a>主要参考资料</h2><h2 id="本次工作的参考资料部分由陈学长提供，部分是由我在网络上所搜寻所得-陈学长完成的关于连接模块联系与初步技术设计的ppt和飞书文档-iotdb关于python原生接口的使用-包含基础方法使用与iotdb服务端连接，dbapi和sqlalchemy相关知识-superset官方网站-提供了比较丰富的信息，官方的连接流程和相关信息都可以从这里获得-superset的github-所提供的是，Superset-x2F-db-engine-specs文件夹下包含有引擎规范的基类base-py和其他各种数据库的基于base-py引擎规范重载实现。-superset调用crateDB的使用指南博客，这里是讲解在代码完成之后，如何用命令行操作完成crateDB和superset的连接与使用-superset与crateDB联动的基础引擎规范实现直播，则是以crateDB数据库为例讲述了操作规范的缘由与从零到一个基础操作规范的实现流程。-stack-overflow的superset问答区-有价值的信息比较少-stack-overflow-pro的superset问答频道-可以回答部分简单的小bug，较为复杂困难的bug还是需要自己完成-用pycharm调试superset的在windows上使用pycharm调试superset的配置"><a href="#本次工作的参考资料部分由陈学长提供，部分是由我在网络上所搜寻所得-陈学长完成的关于连接模块联系与初步技术设计的ppt和飞书文档-iotdb关于python原生接口的使用-包含基础方法使用与iotdb服务端连接，dbapi和sqlalchemy相关知识-superset官方网站-提供了比较丰富的信息，官方的连接流程和相关信息都可以从这里获得-superset的github-所提供的是，Superset-x2F-db-engine-specs文件夹下包含有引擎规范的基类base-py和其他各种数据库的基于base-py引擎规范重载实现。-superset调用crateDB的使用指南博客，这里是讲解在代码完成之后，如何用命令行操作完成crateDB和superset的连接与使用-superset与crateDB联动的基础引擎规范实现直播，则是以crateDB数据库为例讲述了操作规范的缘由与从零到一个基础操作规范的实现流程。-stack-overflow的superset问答区-有价值的信息比较少-stack-overflow-pro的superset问答频道-可以回答部分简单的小bug，较为复杂困难的bug还是需要自己完成-用pycharm调试superset的在windows上使用pycharm调试superset的配置" class="headerlink" title="本次工作的参考资料部分由陈学长提供，部分是由我在网络上所搜寻所得- 陈学长完成的关于连接模块联系与初步技术设计的ppt和飞书文档- iotdb关于python原生接口的使用,包含基础方法使用与iotdb服务端连接，dbapi和sqlalchemy相关知识- superset官方网站 提供了比较丰富的信息，官方的连接流程和相关信息都可以从这里获得- superset的github 所提供的是，Superset&#x2F;db_engine_specs文件夹下包含有引擎规范的基类base.py和其他各种数据库的基于base.py引擎规范重载实现。- superset调用crateDB的使用指南博客，这里是讲解在代码完成之后，如何用命令行操作完成crateDB和superset的连接与使用- superset与crateDB联动的基础引擎规范实现直播，则是以crateDB数据库为例讲述了操作规范的缘由与从零到一个基础操作规范的实现流程。- stack overflow的superset问答区 有价值的信息比较少- stack overflow pro的superset问答频道 可以回答部分简单的小bug，较为复杂困难的bug还是需要自己完成- 用pycharm调试superset的在windows上使用pycharm调试superset的配置"></a>本次工作的参考资料部分由陈学长提供，部分是由我在网络上所搜寻所得<br>- 陈学长完成的关于连接模块联系与初步技术设计的ppt和飞书文档<br>- iotdb关于<a target="_blank" rel="noopener" href="https://iotdb.apache.org/zh/UserGuide/Master/API/Programming-Python-Native-API.html">python原生接口</a>的使用,包含基础方法使用与iotdb服务端连接，dbapi和sqlalchemy相关知识<br>- <a target="_blank" rel="noopener" href="https://preset.io/blog/building-database-connector/">superset官方网站</a> 提供了比较丰富的信息，官方的连接流程和相关信息都可以从这里获得<br>- superset的<a target="_blank" rel="noopener" href="https://github.com/apache/superset">github</a> 所提供的是，Superset&#x2F;db_engine_specs文件夹下包含有引擎规范的基类base.py和其他各种数据库的基于base.py引擎规范重载实现。<br>- superset调用crateDB的<a target="_blank" rel="noopener" href="https://crate.io/blog/cratedb-apache-superset">使用指南博客</a>，这里是讲解在代码完成之后，如何用命令行操作完成crateDB和superset的连接与使用<br>- superset与crateDB联动的<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=lk_sfZq-hrU">基础引擎规范实现直播</a>，则是以crateDB数据库为例讲述了操作规范的缘由与从零到一个基础操作规范的实现流程。<br>- stack overflow的superset<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/tagged/apache-superset">问答区</a> 有价值的信息比较少<br>- stack overflow pro的superset<a target="_blank" rel="noopener" href="https://app.slack.com/client/T7GMC60JX/CH307T4JG">问答频道</a> 可以回答部分简单的小bug，较为复杂困难的bug还是需要自己完成<br>- 用pycharm调试superset的<a href="./superset-debug-windows-pycharm.md">在windows上使用pycharm调试superset的配置</a></h2><h2 id="整个实现流程规划-实际实现的时候对这部分继续了修改"><a href="#整个实现流程规划-实际实现的时候对这部分继续了修改" class="headerlink" title="整个实现流程规划(实际实现的时候对这部分继续了修改)"></a>整个实现流程规划(实际实现的时候对这部分继续了修改)</h2><p>通过前面的资料，大概规划了连接器的一个实现流程</p>
+<ul>
+<li>1、学习iotdb的python原生接口(包含基础方法使用，dbapi和sqlalchemy，实现连接iotdb)</li>
+<li>2、启动superset的开发服务器，实现初步连接</li>
+<li>3、参考其他的数据库引擎规范完成iotdb的重载base.py，遵循在使用当中发现问题解决问题的方式，逐一补充重载函数</li>
+<li>4、连接器整体测试文件与文档</li>
+<li>5、尝试使用docker去运行superset，补充文档</li>
+</ul>
+<h2 id="实现流程"><a href="#实现流程" class="headerlink" title="实现流程"></a>实现流程</h2><h3 id="学习iotdb的python原生接口"><a href="#学习iotdb的python原生接口" class="headerlink" title="学习iotdb的python原生接口"></a>学习iotdb的python原生接口</h3><p>这个部分主要是记录一下作者自己的理解。</p>
+<ul>
+<li><p>在iotdb官网文档当中，关于python原生接口，有一个session example的指导性代码可以参考学习，这里可能会遇到一些错误，可以参考博客——<a href="./iotdb-learn-problem-list.md">iotdb学习踩坑记录</a></p>
+</li>
+<li><p>iotdb-dbapi和iotdb-sqlalchemy是封装在iotdb源码当中，其中iotdb-dbapi是一种python的接口规范，通过python获取iotdb服务将会满足这种规范，iotdb-sqlalchemy则是一种连接协议，这里是superset将会采取sqlalchemy协议与iotdb之间进行连接</p>
+</li>
+<li><p>superset的后端通过sqlalchemy直接链接iotdb服务端，superset对数据库的调用指令通过sqlalchemy转化为DBAPI对于iotdb的调用方式，类似于python与iotdb的连接，但是python客户端与iotdb的连接是直接用iotdb的DBAPI，superset通过sqlalchemy去实现基于DBAPI的更高级的操作，一个基于SQLAlchemy的数据库访问层，该层在底层使用IoTDB的DB-API实现。这种结构允许Superset利用SQLAlchemy的高级特性（如连接池、事务处理等），并实现与其他数据库类型的兼容性。5、解决前端崩溃问题，程序顺利跑起来</p>
+</li>
+</ul>
+<h3 id="安装与启动superset，建立superset与iotdb的连接"><a href="#安装与启动superset，建立superset与iotdb的连接" class="headerlink" title="安装与启动superset，建立superset与iotdb的连接"></a>安装与启动superset，建立superset与iotdb的连接</h3><ul>
+<li><p>superset的安装与启动的这部分内容属于是相当曲折，读者可以看我的另外一篇博客——<a href="./superset-install-run.md">superset的安装与启动</a></p>
+</li>
+<li><p>对于superset和iotdb的连接的步骤如下</p>
+<ul>
+<li>打开superset的本地网站，地址127.0.0.1:8080</li>
+<li>按照前面创建的账号密码进行登录</li>
+<li>点击右上角头像，选择database connect，进入页面点击+database</li>
+<li>在其他数据库当中选择iotdb，如果没有则选择其他，然后输入iotdb的名字</li>
+<li>URL输入<code>iotdb://root:root@127.0.0.1:6667</code>，点击 test connect，显示good弹窗即可点击连接</li>
+</ul>
+</li>
+</ul>
+<h3 id="重载base-py实现适配iotdb的引擎规范"><a href="#重载base-py实现适配iotdb的引擎规范" class="headerlink" title="重载base.py实现适配iotdb的引擎规范"></a>重载base.py实现适配iotdb的引擎规范</h3><ul>
+<li><p>简单理解：</p>
+<ul>
+<li>需要添加的内容在哪里，就是在superset&#x2F;db_engine_specs当中添加一个iotdb.py即可，可能以前的版本还需要在同目录下的init.py进行注册，但是我阅读了现在的最新版本的init.py文件，里面有一个load_engine_specs的函数，这个函数的执行可以直接添加superset&#x2F;db_engine_specs当中的所有引擎规范，并不需要自己额外在其中添加代码</li>
+<li>需要添加的内容是什么，其实就是对base.py文件的一个重载，我简单浏览了一下base.py文件，发现其和iotdb的sqlalchemy的实现居然有很多相似之处，我大概是理解这部分就是使用sqlalchemy进行通信的关键代码，后续的调试也可以在这里进行</li>
+</ul>
+</li>
+<li><p>报错1：sqllab当中superset获取不到iotdb的tables列表</p>
+<ul>
+<li>这个问题的解决历时比较长，因为一开始通过查阅日志当中的报错信息去查找相关资料<ul>
+<li>superset的github的issue, 关键词搜索”tables”,”SEE TABLE SCHEMA”,”There was an error loading the tables”,”&#x2F;api&#x2F;v1&#x2F;database&#x2F;1&#x2F;tables&#x2F;?q&#x3D;(force: !t,s”,”422”，和最新的百条</li>
+<li>superset的slack社区，debugger-together的channel中，关键词检索”tables”,”SEE TABLE SCHEMA”,”There was an error loading the tables”</li>
+<li>superset的slack社区的提问，社区人员没有回复</li>
+<li>咨询chatgpt获取的相关回答</li>
+<li>尝试对于base.py文件函数进行输出调试和修改</li>
+<li>在iotdb的sqlalchemy范围文件用客户端进行信息获取，输出调试等</li>
+</ul>
+</li>
+<li>解决方式：添加view重载，这个通过pycharm的<a target="_blank" rel="noopener" href="https://medium.com/@jayakrishnan.karolil_46246/how-to-run-and-debug-apache-superset-using-pycharm-cdc308fc87b2">调试</a>查找到获取不到table的实际错误信息和日志输出是有不小差距的，调试报错指向了<code>get_view_names</code>函数，在iotdb的引擎规范当中重载<code>get_view_names</code>函数即可</li>
+</ul>
+</li>
+<li><p>报错2：在superset当中选择了table后显示抓取不到table tree mata</p>
+<ul>
+<li>解决方法：这里报错信息指向了sqlalchemy中的iotdbsqlcompiler中的问题，把visit_select函数注释掉后再次打包安装即可解决</li>
+</ul>
+</li>
+<li><p>报错3：换用新的iotdb包后报错缺少模块，无法获取到iotdb的schema</p>
+<ul>
+<li>解决方法：这个目前的错误原因目前还没法确定，但是有两个方向，一个是我当时刚刚装好pycharm没有重启而带来的问题，另一个是superset.db留存了上一个包的部分信息产生冲突，因此删除superset.db然后重启电脑，再重启superset</li>
+</ul>
+</li>
+<li><p>问题4：无法单独查询时间</p>
+<ul>
+<li>解决方法：修改了先前被注释的visit_select，因为这个部分的代码是与sqlalchemy的版本关系较强，原先的代码能够运行，但是sqlalchemy更新之后，这个函数有所变化，所以iotdb的sqlalchemy的visit_select也需要调整</li>
+</ul>
+</li>
+<li><p>报错5：创建dataset的时候，table已经选择好了，但是点击后弹窗显示无法创建，后端报错<code>UNIQUE constraint failed: tables.table_name</code></p>
+<ul>
+<li>解决方法：这里是因为将要创建的table名和已经有的table名重复了，这里需要注意，schema名不同但是table相同也是不能创建的，要么删了原来的，要么现在的table换个名字</li>
+</ul>
+</li>
+<li><p>问题6：时间戳timestamp被识别为了number</p>
+<ul>
+<li>解决方法：这里是superset自身的设置问题，superset的时间戳列需要在dataset的edit当中单独点击设置，需要在列的tab里面给时间戳列点击is temporal 才能被标记为时间</li>
+</ul>
+</li>
+<li><p>问题7：在选择线性图标时候发现横坐标的时间粒度缺失</p>
+<ul>
+<li>解决方法：在iotdb.py当中补充_time_grain_expressions字典的</li>
+</ul>
+</li>
+<li><p>问题8：从iotdb获取的时间戳显示出现问题，很可能是数量级的转化出现错误</p>
+<ul>
+<li>解决方法：根据crateDB在油管的直播视频，他们里面有这个问题的处理方式，需要在iotdb.py中重载了alter_new_orm_column、convert_dttm、epoch_to_dttm、epoch_ms_to_dttm四个函数，然后在superset中给dataset中设置DATETIME FORMAT为epoch_ms。”epoch_ms”是一个常见的时间戳格式，它表示从1970年1月1日00:00:00 UTC开始的毫秒数。</li>
+</ul>
+</li>
+<li><p>问题9：</p>
+</li>
+</ul>
+<h2 id="待解决问题"><a href="#待解决问题" class="headerlink" title="待解决问题"></a>待解决问题</h2><p>1、聚合函数部分的实现</p>
+<ul>
+<li><del>可能的解决方式：参考视频和官网</del></li>
+<li><del>发现了一个方向，就是iotdb没法执行superset提供的聚合函数</del></li>
+<li>新的进展<ul>
+<li>可以使用的聚合函数 COUNT SUM AVG</li>
+<li>superset中提供与iotdb中相似的聚合函数 MAX和MIN</li>
+<li>superset中提供但iotdb中没有的聚合函数 COUNT_DISTINCT</li>
+<li>在聚合函数的参数中，不能选择时间和*</li>
+</ul>
+</li>
+<li>目前新方向<ul>
+<li>找到aggregate的来历，可以直接照着iotdb的聚合函数修改<ul>
+<li>这个找到了位置位于superset-frontend&#x2F;src&#x2F;explore&#x2F;constants.ts当中的AGGREGATES<ul>
+<li>测试了MAX_VALUE和MIN_VALUE都是失败的，报错为KEY_ERROR  测试了maxvalue:maxvalue max:maxvalue等待测试 maxvalue:max</li>
+</ul>
+</li>
+<li>之后需要找到这些key是在哪里调用了，如果不是base.py那就会很麻烦</li>
+</ul>
+</li>
+<li>修改iotdb的sqlalchemy，拟合superset提供的聚合函数</li>
+</ul>
+</li>
+</ul>
+<h2 id="小bug记录"><a href="#小bug记录" class="headerlink" title="小bug记录"></a>小bug记录</h2><ul>
+<li>打开superset网站后，点击sqllab后，报错，后端没法添加新的tab<ul>
+<li>解决方法：这是因为superset当中没有任何数据库，需要先添加数据库连接后才能正常使用</li>
+</ul>
+</li>
+</ul>
+<h2 id="没有复现出来的bug与可能的解决方式"><a href="#没有复现出来的bug与可能的解决方式" class="headerlink" title="没有复现出来的bug与可能的解决方式"></a>没有复现出来的bug与可能的解决方式</h2><ul>
+<li>问题1：superset连接上iotdb后，在sqllab当中选中iotdb数据库后无法识别到schema，出现默认的且不存在的root.ln和root.ln1<ul>
+<li>可能的解决方式，1、重新pull一个superset，再次安装启动，2、清空iotdb的data文件夹里面的confignode和datanode的两个文件夹，重新启动iotdb 3、在2的基础上使用下面的代码创建数据库、创建时间序列、插入数据</li>
+</ul>
+</li>
+</ul>
+<h2 id="吐槽"><a href="#吐槽" class="headerlink" title="吐槽"></a>吐槽</h2><ul>
+<li>1、在一开始是找到了一份前人的关于iotdb的引擎规范的<a target="_blank" rel="noopener" href="https://github.com/noorall/superset/blob/112341467ebcf9ccf48c37d908120b3ff9a18488/superset/db_engine_specs/iotdb.py">参考</a>,但是我仔细一看，发现这就是抄了crateDB的引擎规范，虽然类里面的内容的位置换了一下位置，但是这个类的名称都没改是否有点抽象？？</li>
+<li>2、superset前端崩溃问题在issue当中挂了三年左右，主版本依旧没有更新解决方式，确实是比较抽象</li>
+<li>3、信了chatgpt的鬼话，缩减了superset的开发环境的安装流程，害我多debug了两天，我属实是急了</li>
+<li>4、其实前端崩溃部分只是少了对于前端的编译操作，我在测试2.1版本的时候就想到了这个问题，但是在前端一直编译不成功，但是查了github的issue才发现，2.1版本的这个前端编译是有报错的。其他版本反而正常</li>
+<li>5、在superset的slack里面对于部分问题选择性回答还是比较麻烦的，对于table获取不到的问题，搜索了一下基本上没有官方人员回复，在github的issue也是一样的情况</li>
+</ul>
+<h1 id="杂谈——离奇曲折的安装经历"><a href="#杂谈——离奇曲折的安装经历" class="headerlink" title="杂谈——离奇曲折的安装经历"></a>杂谈——离奇曲折的安装经历</h1><ul>
+<li><p>萌新作者一开始进行安装还是在本地环境下进行的，后面遭遇到了修改文件来解决问题就有点不知所措，因为本地环境下的依赖安装位置并不好找。后来阅读了一些网络上的博客文章，大多都是采用虚拟环境进行操作，虚拟环境既能做到环境和本地分离，还能共用本地的文件，确实是方便了不少，于是决定改用虚拟环境。后面遭遇了flask_app环境变量的设置问题，查阅的资料都是采用linux的export的方式，对于windows确实是有点点不大友好，于是专门搞了个ubuntu来操作一下superset的安装流程，但是因为虚拟机的网络和下载源的问题，依赖下载不完全，还是回到了虚拟环境进行debug。不过还好最后还是有惊无险的顺利完成安装与启动工作，这个部分花了三个多小时。</p>
+</li>
+<li><p>第二天准备进行下一步操作的时候发现，我安装和启动superset居然和superset的源码没有沾上关系，我也是被自己离谱到了。陈学长提到了这是生产环境下的版本，与我们进行开发所需要的版本不一样。于是pull了github源码，重新进行安装与启动，一开始是纠结于选用superset的什么分支，选了几个版本都是报错重重，最后还是用master分支。这里面遇到的了一些新的问题，包括了一个不可复现的前端崩溃问题，后面突然莫名其妙好了。这里大约花费了六个小时。</p>
+</li>
+<li><p>第三天交流iotdb与superset连接问题的时候，superset启动又遭遇了前面的不可复现的前端崩溃。这个问题真的是相当的棘手，当然是在当时看来，现在看来真是自己没有好好读文档遭的罪。不过作者在这里也学会了如何在github中翻找issue，在readme.md中仔细的获取信息，在官方社区中查找解决方式等，首先的是，作者在issue当中了解到很多使用docker进行安装和启动的人也遭遇到了相似的问题，再加上docker更加完善的隔离机制，我也打算改用docker。不过docker才刚刚学习了一些基础，配置好了基础环境，在superset社区的热心群众给我指出了我没有编译前端的问题。我一开始还是不大相信的，因为我在2.1分支当中是进行过前端的编译的，不过遭遇到了一些报错，所以没有进一步的尝试。于是我在master分支上完成了前端的编译工作，最终重新启动了服务器。也就在重启后，我在github的最新的issue，就是当天的issue，发现有人提出来:在其他版本都能够正常编译前端，在2.1版本遭遇到了批量报错问题？？？确实是被离谱到了。不过也有个问题，我前面没有编译前端，前端为什么会出现能够顺利运行的现象？这个对后面问题的处理也造成了一些误导(目前的理解是，因为一开始运行了生产环境的，有前端的缓存，后面出现一直前端崩溃之前是卸载了iotdb的python库带走了部分依赖，当然也有可能是本地编译的时候生成的superset.db存储了前端的信息？)。这个过程大约花费了15小时</p>
+</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://linxt20.github.io">狄仁杰七号</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://linxt20.github.io/2023/04/14/superset-iotdb-connect/">https://linxt20.github.io/2023/04/14/superset-iotdb-connect/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://linxt20.github.io" target="_blank">Drenj7's blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/iotdb/">iotdb</a></div><div class="post_share"><div class="social-share" data-image="https://github.com/linxt20/blog_img/blob/master/cover/cover11.jpg?raw=true" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/04/17/android-studio-spring-boot-okhttp/"><img class="prev-cover" src="https://github.com/linxt20/blog_img/blob/master/cover/cover10.jpg?raw=true" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">android studio 和 spring boot 基于 Okhttp 的前后端连接实现</div></div></a></div><div class="next-post pull-right"><a href="/2023/04/10/android-studio-note/"><img class="next-cover" src="https://github.com/linxt20/blog_img/blob/master/cover/cover07.jpg?raw=true" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">android studio 安卓移动应用开发学习笔记</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/04/22/iotdb-learn-problem-list/" title="iotdb学习踩坑记录"><img class="cover" src="https://github.com/linxt20/blog_img/blob/master/cover/cover14.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-22</div><div class="title">iotdb学习踩坑记录</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/Drenj7avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">狄仁杰七号</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">15</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/linxt20"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">博主回归啦，开始努力更新，欢迎催更</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">问题背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E8%A6%81%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">2.</span> <span class="toc-text">主要参考资料</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AC%E6%AC%A1%E5%B7%A5%E4%BD%9C%E7%9A%84%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99%E9%83%A8%E5%88%86%E7%94%B1%E9%99%88%E5%AD%A6%E9%95%BF%E6%8F%90%E4%BE%9B%EF%BC%8C%E9%83%A8%E5%88%86%E6%98%AF%E7%94%B1%E6%88%91%E5%9C%A8%E7%BD%91%E7%BB%9C%E4%B8%8A%E6%89%80%E6%90%9C%E5%AF%BB%E6%89%80%E5%BE%97-%E9%99%88%E5%AD%A6%E9%95%BF%E5%AE%8C%E6%88%90%E7%9A%84%E5%85%B3%E4%BA%8E%E8%BF%9E%E6%8E%A5%E6%A8%A1%E5%9D%97%E8%81%94%E7%B3%BB%E4%B8%8E%E5%88%9D%E6%AD%A5%E6%8A%80%E6%9C%AF%E8%AE%BE%E8%AE%A1%E7%9A%84ppt%E5%92%8C%E9%A3%9E%E4%B9%A6%E6%96%87%E6%A1%A3-iotdb%E5%85%B3%E4%BA%8Epython%E5%8E%9F%E7%94%9F%E6%8E%A5%E5%8F%A3%E7%9A%84%E4%BD%BF%E7%94%A8-%E5%8C%85%E5%90%AB%E5%9F%BA%E7%A1%80%E6%96%B9%E6%B3%95%E4%BD%BF%E7%94%A8%E4%B8%8Eiotdb%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%BF%9E%E6%8E%A5%EF%BC%8Cdbapi%E5%92%8Csqlalchemy%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86-superset%E5%AE%98%E6%96%B9%E7%BD%91%E7%AB%99-%E6%8F%90%E4%BE%9B%E4%BA%86%E6%AF%94%E8%BE%83%E4%B8%B0%E5%AF%8C%E7%9A%84%E4%BF%A1%E6%81%AF%EF%BC%8C%E5%AE%98%E6%96%B9%E7%9A%84%E8%BF%9E%E6%8E%A5%E6%B5%81%E7%A8%8B%E5%92%8C%E7%9B%B8%E5%85%B3%E4%BF%A1%E6%81%AF%E9%83%BD%E5%8F%AF%E4%BB%A5%E4%BB%8E%E8%BF%99%E9%87%8C%E8%8E%B7%E5%BE%97-superset%E7%9A%84github-%E6%89%80%E6%8F%90%E4%BE%9B%E7%9A%84%E6%98%AF%EF%BC%8CSuperset-x2F-db-engine-specs%E6%96%87%E4%BB%B6%E5%A4%B9%E4%B8%8B%E5%8C%85%E5%90%AB%E6%9C%89%E5%BC%95%E6%93%8E%E8%A7%84%E8%8C%83%E7%9A%84%E5%9F%BA%E7%B1%BBbase-py%E5%92%8C%E5%85%B6%E4%BB%96%E5%90%84%E7%A7%8D%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%9F%BA%E4%BA%8Ebase-py%E5%BC%95%E6%93%8E%E8%A7%84%E8%8C%83%E9%87%8D%E8%BD%BD%E5%AE%9E%E7%8E%B0%E3%80%82-superset%E8%B0%83%E7%94%A8crateDB%E7%9A%84%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97%E5%8D%9A%E5%AE%A2%EF%BC%8C%E8%BF%99%E9%87%8C%E6%98%AF%E8%AE%B2%E8%A7%A3%E5%9C%A8%E4%BB%A3%E7%A0%81%E5%AE%8C%E6%88%90%E4%B9%8B%E5%90%8E%EF%BC%8C%E5%A6%82%E4%BD%95%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%93%8D%E4%BD%9C%E5%AE%8C%E6%88%90crateDB%E5%92%8Csuperset%E7%9A%84%E8%BF%9E%E6%8E%A5%E4%B8%8E%E4%BD%BF%E7%94%A8-superset%E4%B8%8EcrateDB%E8%81%94%E5%8A%A8%E7%9A%84%E5%9F%BA%E7%A1%80%E5%BC%95%E6%93%8E%E8%A7%84%E8%8C%83%E5%AE%9E%E7%8E%B0%E7%9B%B4%E6%92%AD%EF%BC%8C%E5%88%99%E6%98%AF%E4%BB%A5crateDB%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%BA%E4%BE%8B%E8%AE%B2%E8%BF%B0%E4%BA%86%E6%93%8D%E4%BD%9C%E8%A7%84%E8%8C%83%E7%9A%84%E7%BC%98%E7%94%B1%E4%B8%8E%E4%BB%8E%E9%9B%B6%E5%88%B0%E4%B8%80%E4%B8%AA%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C%E8%A7%84%E8%8C%83%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%B5%81%E7%A8%8B%E3%80%82-stack-overflow%E7%9A%84superset%E9%97%AE%E7%AD%94%E5%8C%BA-%E6%9C%89%E4%BB%B7%E5%80%BC%E7%9A%84%E4%BF%A1%E6%81%AF%E6%AF%94%E8%BE%83%E5%B0%91-stack-overflow-pro%E7%9A%84superset%E9%97%AE%E7%AD%94%E9%A2%91%E9%81%93-%E5%8F%AF%E4%BB%A5%E5%9B%9E%E7%AD%94%E9%83%A8%E5%88%86%E7%AE%80%E5%8D%95%E7%9A%84%E5%B0%8Fbug%EF%BC%8C%E8%BE%83%E4%B8%BA%E5%A4%8D%E6%9D%82%E5%9B%B0%E9%9A%BE%E7%9A%84bug%E8%BF%98%E6%98%AF%E9%9C%80%E8%A6%81%E8%87%AA%E5%B7%B1%E5%AE%8C%E6%88%90-%E7%94%A8pycharm%E8%B0%83%E8%AF%95superset%E7%9A%84%E5%9C%A8windows%E4%B8%8A%E4%BD%BF%E7%94%A8pycharm%E8%B0%83%E8%AF%95superset%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="toc-number">3.</span> <span class="toc-text">本次工作的参考资料部分由陈学长提供，部分是由我在网络上所搜寻所得- 陈学长完成的关于连接模块联系与初步技术设计的ppt和飞书文档- iotdb关于python原生接口的使用,包含基础方法使用与iotdb服务端连接，dbapi和sqlalchemy相关知识- superset官方网站 提供了比较丰富的信息，官方的连接流程和相关信息都可以从这里获得- superset的github 所提供的是，Superset&#x2F;db_engine_specs文件夹下包含有引擎规范的基类base.py和其他各种数据库的基于base.py引擎规范重载实现。- superset调用crateDB的使用指南博客，这里是讲解在代码完成之后，如何用命令行操作完成crateDB和superset的连接与使用- superset与crateDB联动的基础引擎规范实现直播，则是以crateDB数据库为例讲述了操作规范的缘由与从零到一个基础操作规范的实现流程。- stack overflow的superset问答区 有价值的信息比较少- stack overflow pro的superset问答频道 可以回答部分简单的小bug，较为复杂困难的bug还是需要自己完成- 用pycharm调试superset的在windows上使用pycharm调试superset的配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E4%B8%AA%E5%AE%9E%E7%8E%B0%E6%B5%81%E7%A8%8B%E8%A7%84%E5%88%92-%E5%AE%9E%E9%99%85%E5%AE%9E%E7%8E%B0%E7%9A%84%E6%97%B6%E5%80%99%E5%AF%B9%E8%BF%99%E9%83%A8%E5%88%86%E7%BB%A7%E7%BB%AD%E4%BA%86%E4%BF%AE%E6%94%B9"><span class="toc-number">4.</span> <span class="toc-text">整个实现流程规划(实际实现的时候对这部分继续了修改)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E6%B5%81%E7%A8%8B"><span class="toc-number">5.</span> <span class="toc-text">实现流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%A6%E4%B9%A0iotdb%E7%9A%84python%E5%8E%9F%E7%94%9F%E6%8E%A5%E5%8F%A3"><span class="toc-number">5.1.</span> <span class="toc-text">学习iotdb的python原生接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E4%B8%8E%E5%90%AF%E5%8A%A8superset%EF%BC%8C%E5%BB%BA%E7%AB%8Bsuperset%E4%B8%8Eiotdb%E7%9A%84%E8%BF%9E%E6%8E%A5"><span class="toc-number">5.2.</span> <span class="toc-text">安装与启动superset，建立superset与iotdb的连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8D%E8%BD%BDbase-py%E5%AE%9E%E7%8E%B0%E9%80%82%E9%85%8Diotdb%E7%9A%84%E5%BC%95%E6%93%8E%E8%A7%84%E8%8C%83"><span class="toc-number">5.3.</span> <span class="toc-text">重载base.py实现适配iotdb的引擎规范</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BE%85%E8%A7%A3%E5%86%B3%E9%97%AE%E9%A2%98"><span class="toc-number">6.</span> <span class="toc-text">待解决问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8Fbug%E8%AE%B0%E5%BD%95"><span class="toc-number">7.</span> <span class="toc-text">小bug记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B2%A1%E6%9C%89%E5%A4%8D%E7%8E%B0%E5%87%BA%E6%9D%A5%E7%9A%84bug%E4%B8%8E%E5%8F%AF%E8%83%BD%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E5%BC%8F"><span class="toc-number">8.</span> <span class="toc-text">没有复现出来的bug与可能的解决方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%90%E6%A7%BD"><span class="toc-number">9.</span> <span class="toc-text">吐槽</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9D%82%E8%B0%88%E2%80%94%E2%80%94%E7%A6%BB%E5%A5%87%E6%9B%B2%E6%8A%98%E7%9A%84%E5%AE%89%E8%A3%85%E7%BB%8F%E5%8E%86"><span class="toc-number"></span> <span class="toc-text">杂谈——离奇曲折的安装经历</span></a></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/05/12/android-studio-usingproblem/" title="android studio使用技巧与报错解决"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover16.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="android studio使用技巧与报错解决"/></a><div class="content"><a class="title" href="/2023/05/12/android-studio-usingproblem/" title="android studio使用技巧与报错解决">android studio使用技巧与报错解决</a><time datetime="2023-05-12T09:50:32.000Z" title="发表于 2023-05-12 17:50:32">2023-05-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/05/09/superset-debug-windows-pycharm/" title="在windows上使用pycharm调试superset的配置"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover15.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="在windows上使用pycharm调试superset的配置"/></a><div class="content"><a class="title" href="/2023/05/09/superset-debug-windows-pycharm/" title="在windows上使用pycharm调试superset的配置">在windows上使用pycharm调试superset的配置</a><time datetime="2023-05-09T12:48:52.000Z" title="发表于 2023-05-09 20:48:52">2023-05-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/22/iotdb-learn-problem-list/" title="iotdb学习踩坑记录"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover14.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="iotdb学习踩坑记录"/></a><div class="content"><a class="title" href="/2023/04/22/iotdb-learn-problem-list/" title="iotdb学习踩坑记录">iotdb学习踩坑记录</a><time datetime="2023-04-22T14:04:59.000Z" title="发表于 2023-04-22 22:04:59">2023-04-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/21/THU-embedded-guide-Part1/" title="THU-2023年春嵌入式课程实验指南——大作业Part1"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover09.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="THU-2023年春嵌入式课程实验指南——大作业Part1"/></a><div class="content"><a class="title" href="/2023/04/21/THU-embedded-guide-Part1/" title="THU-2023年春嵌入式课程实验指南——大作业Part1">THU-2023年春嵌入式课程实验指南——大作业Part1</a><time datetime="2023-04-20T17:09:19.000Z" title="发表于 2023-04-21 01:09:19">2023-04-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/21/superset-install-run/" title="superset的安装与启动——虚拟环境与docker"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover13.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="superset的安装与启动——虚拟环境与docker"/></a><div class="content"><a class="title" href="/2023/04/21/superset-install-run/" title="superset的安装与启动——虚拟环境与docker">superset的安装与启动——虚拟环境与docker</a><time datetime="2023-04-20T16:59:58.000Z" title="发表于 2023-04-21 00:59:58">2023-04-21</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://github.com/linxt20/blog_img/blob/master/cover/cover11.jpg?raw=true')"><div id="footer-wrap"><div class="copyright">&copy;2021 - 2023 By 狄仁杰七号</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function addGitalkSource () {
+  const ele = document.createElement('link')
+  ele.rel = 'stylesheet'
+  ele.href= 'https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css'
+  document.getElementsByTagName('head')[0].appendChild(ele)
+}
+
+function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: 'a87b382d981e2f61ed82',
+      clientSecret: '5b37507de47d283cab4659111e11b1794c0e7451',
+      repo: 'linxt20.github.io',
+      owner: 'linxt20',
+      admin: ['linxt20'],
+      id: '67a1d7189b46fee787abbe8c7b9c9632',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    addGitalkSource()
+    getScript('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.innerHTML= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !true) {
+  if (true) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/fireworks.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body></html>
