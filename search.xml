@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>VMware的网络连接——桥接与NAT的选择与配置</title>
+      <link href="/2023/05/15/vmware-network-connect/"/>
+      <url>/2023/05/15/vmware-network-connect/</url>
+      
+        <content type="html"><![CDATA[<div class="note info modern"><p>这里作者使用的VMware版本为16.2.2 build-19200509，使用的ubuntu版本为18.04.6LTS，这里讨论的均为无线网络</p></div><h2 id="桥接与NAT的区别"><a href="#桥接与NAT的区别" class="headerlink" title="桥接与NAT的区别"></a>桥接与NAT的区别</h2><ul><li><p>桥接模式：虚拟机的网卡将会桥接到宿主机的物理网卡，使得虚拟机拥有区别于宿主机的IP，能够作为一个独立于宿主机的设备在网络中与其他的设备进行通信。</p></li><li><p>NAT模式：虚拟机的网络流量通过宿主机的物理网卡转发，在这种模式下，宿主机相当于虚拟机与外界通信的一个中转站，虚拟机传输给外界的信息包需要在宿主机中修改为宿主机的ip分发出去。</p></li><li><p>区别：简而言之，在NAT模式下，虚拟机通过宿主机进行网络通信，而在桥接模式下，虚拟机直接与网络进行通信。基于这些区别，两者的优缺点如下：</p><ul><li>NAT模式可以提供一定的网络隔离，增加安全性，但可能会带来一定的网络性能损耗。</li><li>桥接模式可以提供更高的网络性能，但可能需要更复杂的网络配置。</li></ul></li></ul><h2 id="使用VMware的桥接模式联网"><a href="#使用VMware的桥接模式联网" class="headerlink" title="使用VMware的桥接模式联网"></a>使用VMware的桥接模式联网</h2><p>使用桥接模式联网的操作相对比较繁琐一点，这里主要参考了CSDN上的<a href="https://blog.csdn.net/weixin_42627397/article/details/110826285">VMware虚拟机配置Ubuntu桥接方式</a>,虽然这篇博客相比于其他的博客讲述更加的简洁，但是在ip配置上反而有些过于省略，而且Ubuntu的版本和我的有一些差距，在修改网络配置的时候有些许区别。</p><p>我这里写一个完整版本：</p><ul><li>1、首先关闭虚拟机，这里需要关机而不是挂起，否则无法修改后面的网络适配器</li><li>2、按照下图的指示依次点击<code>编辑虚拟器设置</code>，<code>网络适配器</code>，<code>桥接模式</code>(下面的赋值物理网络连接状态不需要勾选),点击完后不要忘记点击下方的<code>确认</code>保存设置<br><img src="https://github.com/linxt20/blog_img/blob/master/vmware-network-connect/bridgemodelconnect1.jpg?raw=true" alt="桥接模式连接流程1"></li><li>3、点击VMware左上角的<code>编辑</code>-&gt;<code>虚拟机网络编辑器</code>,随后按照下图的指示在上方选择<code>VMnet0 桥接模式</code>,随后在已桥接至的下拉框选择<code>自动</code>即可，最后记得依次点击下方的<code>应用</code>和<code>确认</code>保存设置(如果没有修改的话<code>应用</code>不用点，也没法点)<br><img src="https://github.com/linxt20/blog_img/blob/master/vmware-network-connect/bridgemodelconnect2.jpg?raw=true" alt="桥接模式连接流程2"></li><li>4、虚拟机开机，在虚拟机的右上角，按照下图3的指示，打开网络设置的编辑页面(注意不同的虚拟机版本打开网络设置页面的方式可能有所不同),随后按照下图4的指示，如果网络没有打开先打开网络到ON，然后点击设置<br><img src="https://github.com/linxt20/blog_img/blob/master/vmware-network-connect/bridgemodelconnect3.jpg?raw=true" alt="桥接模式连接流程3"><br><img src="https://github.com/linxt20/blog_img/blob/master/vmware-network-connect/bridgemodelconnect4.jpg?raw=true" alt="桥接模式连接流程4"></li><li>5、在宿主机中，打开cmd命令行窗口，输入指令<code>ipconfig /all</code>可以显示出所有的网络接口的详细信息，找到自己当前正在使用的无线网，如下图5，在虚拟机中，按照下图6的流程点击进入IPv4的配置页面，选择Manual(手动模式)，**这里需要注意的是 Address的ip地址需要和宿主机的ip地址有所不同，例如我的宿主机现在ip地址是<code>192.168.43.78</code>,那我给虚拟机设置的ip地址可以是<code>192.168.43.77</code>**，后面的子网、网关和DNS根据图5获取的信息填写即可。完成后点击右上角的apply(应用)保存设置。<br><img src="https://github.com/linxt20/blog_img/blob/master/vmware-network-connect/bridgemodelconnect5.jpg?raw=true" alt="桥接模式连接流程5"><br><img src="https://github.com/linxt20/blog_img/blob/master/vmware-network-connect/bridgemodelconnect6.jpg?raw=true" alt="桥接模式连接流程6"></li><li>6、现在虚拟机中已经可以正常访问网络，这里随后复制一个CSDN的网址，如下：<br><img src="https://github.com/linxt20/blog_img/blob/master/vmware-network-connect/NATconnectsuccess.jpg?raw=true" alt="成功连接网络"></li></ul><p>这个部分会出现的问题有下面几个：</p><ul><li><p>1、在校园网下，使用桥接模式，经过上面的配置后，虚拟机中依旧无法联网(可能不是所有的校园网都有这个问题，至少作者使用的校园网存在这个问题):</p><ul><li>可能原因: 无线路由器和接入点通常会限制哪些设备可以通过MAC地址连接。当虚拟机尝试以其自己的MAC地址通过桥接模式连接时，无线网络可能不会接受这个新的设备。</li></ul></li><li><p>2、配置完后虚拟机中可以联网，但是宿主机中无法联网，关闭虚拟机当中的网络连接，宿主机中可以联网</p><ul><li>原因：配置过程的第五步中，没有按照加粗字体的提示，错误地设置虚拟机的ip和宿主机一样，这样由于桥接模式相当于一个独立的设备，虚拟机抢占了宿主机的ip，导致宿主机无法联网</li><li>解决方式：按照配置过程的第五步的加粗字体要求，设置虚拟机的ip地址与宿主机的ip地址不同</li></ul></li><li><p>3、配置完后无法联网(先排除了校园网的情况)</p><ul><li>可能原因：可能刚刚完成的配置还没有被同步应用到虚拟机中</li><li>解决方式：这个问题部分博客说是需要重启虚拟机，这是不必要的，这里断开网络连接后重新启动网络连接就可以</li></ul></li><li><p>4、有的读者可能会好奇，为什么通过这种配置不需要输入无线网络的密码，虚拟机就可以访问</p><ul><li>原因：这是因为对于桥接模式而言，桥接模式将虚拟机地网卡桥接到了宿主机的网卡上，两者使用的网络连接是相同的，也就是在宿主机上已经输入过密码并且连接成功的无线网络，在虚拟机当中可以直接利用这个已经建立的连接进行网络访问。虚拟机并没有建立一个新的独立的连接。</li></ul></li></ul><h2 id="使用VMware的NAT模式联网"><a href="#使用VMware的NAT模式联网" class="headerlink" title="使用VMware的NAT模式联网"></a>使用VMware的NAT模式联网</h2><p>使用NAT模式联网的操作非常简洁，流程如下：</p><ul><li>1、首先关闭虚拟机，这里需要关机而不是挂起，否则无法修改后面的网络适配器</li><li>2、按照下面的指示依次点击<code>编辑虚拟器设置</code>，<code>网络适配器</code>，<code>NAT模式</code>,点击完后不要忘记点击下方的<code>确认</code>保存设置<br><img src="https://github.com/linxt20/blog_img/blob/master/vmware-network-connect/NATmodelconnect.jpg?raw=true" alt="NAT模式联网流程"></li><li>3、随后开机即显示联网，随手复制个CSDN的网址进去可以正常访问<br><img src="https://github.com/linxt20/blog_img/blob/master/vmware-network-connect/NATconnectsuccess.jpg?raw=true" alt="成功连接网络"></li></ul><p>这个部分可能会出现的问题有：</p><ul><li>1、读者尝试完前面的桥接模式，想要也尝试一下NAT模式，但是发现按照上面的配置完，无法连接网络<ul><li>原因：桥接模式中对于虚拟机中的网络配置没有清除，两者之间存在冲突</li><li>解决方式：在虚拟机的网络设置当中，按照下图的操作后，点击应用，关闭网络连接再重启即可 <img src="https://github.com/linxt20/blog_img/blob/master/vmware-network-connect/closebridgemodel.jpg?raw=true" alt="关闭桥接模式的设置"></li></ul></li></ul><h2 id="代理配置"><a href="#代理配置" class="headerlink" title="代理配置"></a>代理配置</h2><p>这里暂时还没有解决，等待后续补充解决</p><p>目前有两个解决方向：</p><ul><li><p>主机代理共享：</p><ul><li>目前主机代理共享遇到的问题是：主机机器的防火墙可能阻止虚拟机通过VPN或代理访问网络。可能需要在防火墙中允许Clash代理端口的入站和出站连接。</li></ul></li><li><p>VMware独立配置代理</p><ul><li>这个部分需要在VMware当中安装VPN软件，随后在桥接模式下使用，应该可以成功实现代理，后续进行测试后会将结果记录在这里。但是这个方式还需要在虚拟机单独配置VPN，可能没有主机代理共享方式的方便。</li></ul></li></ul><p>这里还有一个不推荐的方式：</p><ul><li>这个方式是CSDN社区文章——<a href="https://blog.csdn.net/weixin_45934869/article/details/129100574">VMware桥接模式虚拟机上网问题踩坑</a>中提出来了，这篇文章当中提出在宿主机的Clash中打开<code>Allow LAN</code>的方式让虚拟机共享主机的代理，其中Clash的”Allow LAN”是一中 允许局域网(LAN)内的其他设备连接到运行Clash的设备，并使用它作为代理服务器的方式。但是不论是宿主机是连接了手机热点还是校园网，在这个局域网内，其他连接了手机热点还是校园网的设备都可以走这个宿主机的代理，这样造成的一方面是流量的问题，另一方面还是宿主机的网络安全问题。所以很不推荐这种方式实现代理共享。</li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> 技术 </category>
+          
+          <category> vmware </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> vmware </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>android studio使用技巧与报错解决</title>
       <link href="/2023/05/12/android-studio-usingproblem/"/>
       <url>/2023/05/12/android-studio-usingproblem/</url>
