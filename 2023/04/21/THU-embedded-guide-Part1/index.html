@@ -1,0 +1,304 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>THU-2023年春嵌入式课程实验指南——大作业Part1 | Drenj7's blog</title><meta name="keywords" content="嵌入式"><meta name="author" content="狄仁杰七号"><meta name="copyright" content="狄仁杰七号"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="这个实验有点小小离谱，去年的班级助教提供了百科荣创的一份全面实验参考文档，今年辛苦助教从中专门删除大部分参考内容，在提高学生自我探索能力上真的是呕心沥血了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="THU-2023年春嵌入式课程实验指南——大作业Part1">
+<meta property="og:url" content="https://linxt20.github.io/2023/04/21/THU-embedded-guide-Part1/index.html">
+<meta property="og:site_name" content="Drenj7&#39;s blog">
+<meta property="og:description" content="这个实验有点小小离谱，去年的班级助教提供了百科荣创的一份全面实验参考文档，今年辛苦助教从中专门删除大部分参考内容，在提高学生自我探索能力上真的是呕心沥血了。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://github.com/linxt20/blog_img/blob/master/cover/cover09.jpg?raw=true">
+<meta property="article:published_time" content="2023-04-20T17:09:19.000Z">
+<meta property="article:modified_time" content="2025-03-23T08:21:16.122Z">
+<meta property="article:author" content="狄仁杰七号">
+<meta property="article:tag" content="嵌入式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/linxt20/blog_img/blob/master/cover/cover09.jpg?raw=true"><link rel="shortcut icon" href="/img/Drenj7icon.png"><link rel="canonical" href="https://linxt20.github.io/2023/04/21/THU-embedded-guide-Part1/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":200},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":200,"languages":{"author":"作者: 狄仁杰七号","link":"链接: ","source":"来源: Drenj7's blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'THU-2023年春嵌入式课程实验指南——大作业Part1',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-03-23 16:21:16'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/Drenj7avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">11</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/pinacotheca/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://github.com/linxt20/blog_img/blob/master/cover/cover09.jpg?raw=true')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Drenj7's blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/pinacotheca/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">THU-2023年春嵌入式课程实验指南——大作业Part1</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-04-20T17:09:19.000Z" title="发表于 2023-04-21 01:09:19">2023-04-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-03-23T08:21:16.122Z" title="更新于 2025-03-23 16:21:16">2025-03-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E4%BD%9C%E4%B8%9A%E6%8C%87%E5%8D%97/">作业指南</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E4%BD%9C%E4%B8%9A%E6%8C%87%E5%8D%97/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>11分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="THU-2023年春嵌入式课程实验指南——大作业Part1"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><div class="note info modern"><p>先叠个甲，如果出现了本指南没有覆盖到的错误，还是需要求助有经验的同学。希望大家作业完成顺利。当然，如果有大佬觉得这篇指南的内容过于幼稚简单，受限于本人水平，还请多多见谅。</p>
+</div>
+
+<p>下一篇文章指路: <a href="./THU-embedded-guide-Part2-3.md">THU-2023年春嵌入式课程实验指南——大作业Part2-3</a></p>
+<h2 id="题目要求概述"><a href="#题目要求概述" class="headerlink" title="题目要求概述"></a>题目要求概述</h2><ul>
+<li>1、使用系统I&#x2F;O函数读取WAV音频文件，并将音频文件参数输出至命令行。</li>
+<li>2、将上一步读取到的音频文件参数写入开发平台上的txt文件中。</li>
+<li>3、实验最终结果为：在开发板中运行目标程序后，会在同目录文件夹下生成一个与音乐文件名同名的txt文件，文件中包含有WAV音频文件的参数。</li>
+</ul>
+<h2 id="部署环境简介"><a href="#部署环境简介" class="headerlink" title="部署环境简介"></a>部署环境简介</h2><ul>
+<li>硬件环境<ul>
+<li>电脑系统<ul>
+<li>本实验中电脑系统为Windows 10、Windows 11和macOS均可顺利运行。</li>
+</ul>
+</li>
+<li>开发板系统<ul>
+<li>自9字班开始使用的新设备盒，注意开发板的启动模式选择EMMC启动</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>软件环境<ul>
+<li>xshell版本: Xshell 7(Build 0122)</li>
+<li>xftp版本: Xftp 7(Build 0119)</li>
+<li>vmware版本: 16.2.2 build-19200509 </li>
+<li>ubuntu版本: 18.04.6LTS (即课程提供的ubuntu)</li>
+</ul>
+</li>
+</ul>
+<h2 id="实验流程"><a href="#实验流程" class="headerlink" title="实验流程"></a>实验流程</h2><h3 id="流程概述"><a href="#流程概述" class="headerlink" title="流程概述"></a>流程概述</h3><ul>
+<li>利用Xshell串口工具连接开发板，并在Windows&#x2F;macOS系统上的VMware中的Ubuntu系统中编写相应程序，通过交叉编译生成目标文件，通过Xftp工具将编译好的程序传输至开发板运行。</li>
+</ul>
+<h3 id="实验操作步骤"><a href="#实验操作步骤" class="headerlink" title="实验操作步骤"></a>实验操作步骤</h3><div class="note red modern"><p>在实验操作流程当中遇到问题，可以先看下一节中的问题与解决，如果没有覆盖到读者的问题，那读者还需要去咨询有经验的同学。</p>
+</div>
+<ul>
+<li>1、下载开发环境：从课程提供的下载链接(以每年最新链接为准)中下载开发环境(包含有虚拟机镜像、vmware安装程序、xshell安装程序、xftp安装程序)</li>
+<li>2、导入虚拟机镜像：由于之前已经下载过 VMware Workstation，这里不再赘述。打开虚拟机，导入压缩包解压后得到的1804文件夹下的虚拟机镜像<code>Ubuntu 1804.vmx</code>，账号与密码均为<code>bkrc</code>。</li>
+<li>3、安装下载的开发环境文件当中的xshell和xftp工具</li>
+<li>4、xshell连接开发板: <ul>
+<li>使用工具箱里的USB Type-B连接电脑与开发板</li>
+<li>打开xshell，新建会话，在弹出的窗口中，协议选择<code>SERIAL</code>，名称随意，随后点击左侧列表中的<code>串口</code>，选择<code>端口号</code>，具体端口号需要到电脑的<code>设备管理器</code>中，找到<code>端口</code>一项,其中可以看到<code>Silicon Labs CP210x USB to UART Bridge(COMX)</code> 这里的X,在不同设备上是不同的，在我们小组的三位同学的电脑上分别为COM5,COM6,COM27.</li>
+<li>点击<code>连接</code>即可</li>
+<li>这样xshell就相当于开发板linux系统的终端，可以实现在开发板上的文件操作</li>
+</ul>
+</li>
+<li>5、ftp连接<ul>
+<li>使用工具箱里面的网线连接电脑与开发板</li>
+<li>这里需要配置主机和开发板的ip<ul>
+<li>电脑ip:<code>控制面板-&gt;网络和共享中心-&gt;更改适配器设置</code>,找到<code>以太网</code>接口，右键属性，在弹出的窗口中，双击<code>Internet 协议版本 4 (TCP/IPv4)</code>。选择<code>使用下面的IP地址</code>，然后输入IP地址<code>192.168.1.2</code>和子网掩码<code>255.255.255.0</code>。点击<code>确定</code>以保存设置。</li>
+<li>开发板ip:这部分操作需要在xshell上进行，<code>ifconfig eth0 192.168.1.3 netmask 255.255.255.0</code>，可以用过<code>ifconfig</code>检查<code>ip</code>是否已经成功配置</li>
+</ul>
+</li>
+<li>打开xftp工具，新建会话，名称随意，主机填写开发板的ip地址192.168.1.3，下面用户名写root，点击连接即可</li>
+<li>这样xftp就实现了电脑与开发板系统的文件传输连接</li>
+</ul>
+</li>
+<li>6、<strong>代码编写</strong>：在vmware workstation上的home目录下编写代码，参考助教提供的文件操作函数，函数的伪代码如下：<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//当处理 WAV 文件时，可以通过定义一个结构体来表示 WAV 文件头，这个结构体的成员变量对应着 WAV 文件头中的各个字段，从而可以方便地读取和解析 WAV 文件的信息。</span></span><br><span class="line"><span class="comment">// int 由uint32_t代替，short 由uint16_t代替，因为在跨平台后有可能不兼容</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">WAV_HEADER</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	<span class="type">char</span> 		chunk_id[<span class="number">4</span>]; <span class="comment">// riff 标志号</span></span><br><span class="line">	<span class="type">uint32_t</span> 	chunk_size; <span class="comment">// riff长度</span></span><br><span class="line">	<span class="type">char</span> 		format[<span class="number">4</span>]; <span class="comment">// 格式类型(wav)</span></span><br><span class="line">	... <span class="comment">// 省略其余信息</span></span><br><span class="line">	</span><br><span class="line">&#125; wav_header;</span><br><span class="line"><span class="type">int</span> wav_header_size; <span class="comment">// 接收wav_header数据结构体的大小</span></span><br><span class="line"></span><br><span class="line">FILE *fp; <span class="comment">// 音乐文件指针变量</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 通过使用 C 语言的标准库函数 fread，可以从音乐文件中读取文件头的数据，并将其存储到先前定义的 struct WAV_HEADER 结构体的实例 wav_header 中。</span></span><br><span class="line"><span class="comment">// 随后，通过访问 wav_header 结构体的成员变量，就可以获取 WAV 文件的各种信息，如 RIFF 标志、文件大小、文件格式等，从而进行后续的处理和输出。</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">open_music_file</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *path_name)</span>&#123;</span><br><span class="line">	FILE *fptxt; <span class="comment">// 输出文件指针</span></span><br><span class="line">	<span class="type">char</span> name[<span class="number">100</span>] = <span class="string">&quot;[file name].txt&quot;</span> <span class="comment">// 新建的输出文本文档的名称</span></span><br><span class="line">     <span class="comment">// 通过fopen函数打开音乐文件</span></span><br><span class="line">	fptxt = fopen(name, <span class="string">&quot;w&quot;</span>);</span><br><span class="line">	fp = fopen(path_name, <span class="string">&quot;rb&quot;</span>);</span><br><span class="line">	<span class="comment">// 判断wav文件是否为空，为空则退出</span></span><br><span class="line">	<span class="keyword">if</span>(fp == <span class="literal">NULL</span>)&#123;fclose(fp); fclose(fptxt); <span class="built_in">exit</span>(<span class="number">1</span>);&#125;</span><br><span class="line">	<span class="comment">// 把文件指针定位到文件的开头处</span></span><br><span class="line">	fseek(fp, <span class="number">0</span>, SEEK_SET);</span><br><span class="line">	<span class="comment">// 读取文件，并解析文件头获取有用信息</span></span><br><span class="line">	wav_header_size = fread(&amp;wav_header, <span class="number">1</span>, <span class="keyword">sizeof</span>(wav_header), fp);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 输出读取到的wav文件的信息</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;wav文件头结构体大小：	%d 			\n&quot;</span>, wav_header_size);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;RIFF标志：		\t 		%c%c%c%c 	\n&quot;</span>, wav_header.chunk_id[<span class="number">0</span>], ...);</span><br><span class="line">	... <span class="comment">// 省略输出wav文件剩余信息</span></span><br><span class="line">        </span><br><span class="line">    <span class="comment">// 同理，将输出信息写入 [file name].txt</span></span><br><span class="line">	<span class="built_in">fprintf</span>(fptxt, <span class="string">&quot;RIFF标志：		\t 		%c%c%c%c 	\n&quot;</span>, wav_header.chunk_id[<span class="number">0</span>], ...);</span><br><span class="line">	... <span class="comment">// 省略写入wav文件剩余信息</span></span><br><span class="line">	fclose(fptxt);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 主函数用来解析命令行参数</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv [])</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">int</span> ret; <span class="comment">// 用来获取参数类型</span></span><br><span class="line">    <span class="type">bool</span> flag = <span class="literal">true</span>; <span class="comment">// 用来判断是否填入参数</span></span><br><span class="line">	<span class="comment">// 遍历所有参数</span></span><br><span class="line">	<span class="keyword">while</span>((ret = getopt(argc,argv,<span class="string">&quot;m:&quot;</span>)) != <span class="number">-1</span>)&#123;</span><br><span class="line">		flag = <span class="literal">false</span>;</span><br><span class="line">		<span class="keyword">switch</span>(ret)&#123;</span><br><span class="line">			<span class="keyword">case</span> <span class="string">&#x27;m&#x27;</span>: <span class="comment">// 如果是m，则调用 open_music_file 函数</span></span><br><span class="line">				open_music_file(optarg);</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			<span class="keyword">default</span>:</span><br><span class="line">                <span class="comment">// 说明错误使用了别的参数，print usage然后退出</span></span><br><span class="line">				print usage</span><br><span class="line">				<span class="title function_">exit</span><span class="params">(<span class="number">0</span>)</span>; </span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(flag)&#123;</span><br><span class="line">		<span class="comment">// 说明未使用参数，print usage然后退出</span></span><br><span class="line">        print usage</span><br><span class="line">		<span class="title function_">exit</span><span class="params">(<span class="number">1</span>)</span>; </span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 最后关闭文件然后退出</span></span><br><span class="line">	fclose(fp);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>7、代码编译: 在虚拟机中，先通过<code>gcc Music_App -o test.wav</code>本地编译测试test.wav文件，成功实现目标效果后，在home目录下，输入加载交叉编译环境指令<code>source /opt/st/myir/3.1-snapshot/environment-setup-cortexa7t2hf-neon-vfpv4-ostl-linux-gnueabi</code>,随后编译音乐播放器应用程序<code>$CC Music_App.c -o Music_App</code>生成<code>Music_App</code>(实际执行的指令以助教提供的为准，大作业材料不一定都是代代相传的)</li>
+<li>8、目标文件的传输与执行：将文件通过xftp连接到开发板上，在xshell中输入ls可以查看到<code>Music_App</code>，通过<code>chmod 777 Music_App</code>指令赋予<code>Music_App</code>可执行文件权限，随后输入<code>./Music_App -m test.wav</code>运行程序，即完成了该实验。</li>
+</ul>
+<h3 id="实验中遇到的问题与解决方法"><a href="#实验中遇到的问题与解决方法" class="headerlink" title="实验中遇到的问题与解决方法"></a>实验中遇到的问题与解决方法</h3><ul>
+<li>1、开发环境下载：在下载开发环境的时候，使用多开IDM同时下载六个压缩包文件，会导致下载文件错误，解压后的虚拟机镜像文件不可用。解决方法是删除下载文件，用IDM一个一个重新下载</li>
+<li>2、xshell和xftp的安装：安装xshell和xftp的时候，警告需要更新版本，但是更新程序一直无响应，比较抽象。解决方法是去NetSarang Computer的<a target="_blank" rel="noopener" href="https://www.netsarang.com/en/">官网</a>上，用学生邮箱申请免费版本，下载后安装即可</li>
+<li>3、xshell串口端口: 在选择开发板串口端口号的时候，在电脑的<code>设备管理器</code>中，找到<code>端口</code>一项中无法找到<code>Silicon Labs CP210x USB to UART Bridge(COMX)</code> 。解决方法：上silabs的<a target="_blank" rel="noopener" href="https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers?tab=downloads">官网</a>,在软件下载处下载<code>CP210x Universal Windows Driver</code>,解压下载的压缩包，右键.inf文件安装即可，随后即可在电脑的<code>设备管理器</code>中，找到<code>端口</code>一项中的<code>Silicon Labs CP210x USB to UART Bridge(COMX)</code> 在串口端口号中选择对应的<code>COMX</code>即可</li>
+<li>4、xshell确认与连接:在xshell创建会话中，配置好串口信息后，点击<code>确认</code>后，没有显示创建的会话。<ul>
+<li>解决方式1：通过资料的查阅，了解到点击确认后，Xshell将保存用户所做的会话配置更改，但不会立即启动与目标设备的连接。关闭会话配置窗口后，用户可以在 Xshell 的会话管理器中找到刚才创建或修改的会话，双击会话条目或选择会话并点击 “连接” 按钮以建立连接。</li>
+<li>解决方式2：在配置好串口信息后，点击<code>连接</code>而不是点击<code>确认</code>可以直接连接上会话</li>
+</ul>
+</li>
+<li>5、xshell与开发板成功连接后，一直显示connected，而没有显示出终端输入的位置，也没有助教上课讲述的几分钟的加载过程。解决方式，助教指出这种现象是正常现象，只需要ctrl+C打断即可进入终端输入。</li>
+<li>6、开发板ip的配置：这个地方比较的曲折，一开始通过查阅资料了解到可以将开发板挂在到虚拟机，经过一段尝试没有成功，后改用FTP客户端软件连接开发板文件系统，但是这个时候依旧没有使用网线，而是考虑给开发板和电脑连接手机热点，再进行ip配置，但是经过一段时间的尝试依旧失败，最后阅读ppt了解到需要使用网线连接开发板和电脑，再通过chatgpt查询到window和linux的ip配置，最终成功配置了两边的ip，连接上xftp</li>
+<li>7、代码编写中的问题<ul>
+<li>不了解wav文件的信息如何提取。通过查找<a target="_blank" rel="noopener" href="https://www.cnblogs.com/ranson7zop/p/7657874.html">相关网站</a>，我们找到了拆解wav文件编码信息的方法，并通过将其定义为结构体的方式，将读入的wav文件的信息逐个对应到该结构体中的各个变量，从而可以正确地解析wav文件头。例如，<code>chunk_id</code>、 <code>chunk_size</code>、 <code>format</code> 等成员变量对应着 WAV 文件头中的 RIFF 标志、文件大小、文件格式等字段。</li>
+<li>不熟悉c语言中字符串处理的方式</li>
+<li>为了在后续开发中处理多个命令行参数，需要使用c语言中的<code>getopt</code>函数和<code>optarg</code>变量来循环解析命令行参数，并根据参数执行相应的操作。</li>
+<li>需要用<code>uint32_t</code>代替<code>int</code>，用<code>int16_t</code>代替<code>short</code>，因为在交叉编译时不同数据类型有可能不兼容，导致类型长度不一致，因此选择使用统一的类型。</li>
+</ul>
+</li>
+<li>8、执行程序在开发板上无法运行：这个部分是由于对ppt和项目参考文档的阅读的疏忽，可执行文件传输到开发板上没有赋予可执行文件权限，解决方法是:通过<code>chmod 777 Music_App</code>指令赋予<code>Music_App</code>可执行文件权限。</li>
+<li>9、再次连接开发板重启实验时ip分配：当再次重启实验后，此时发现直接点击xftp中上一次会话不能顺利连接上开发板，经过检查主机的以太网ip分配记录是保留的，但是开发板上的ip需要重新配置，此时输入<code>ifconfig eth0 192.168.1.3 netmask 255.255.255.0</code>重新配置开发板ip即可</li>
+<li>10、xftp中的无线网冲突：当xftp连接所需的ip都已经分配完毕，会话成功创建，但是显示无法连接到指定ip，这个时候可以检查主机上的无线网是否断开，无线网的连接会与以太网的连接相互冲突，这个时候需要断开无线网，xftp即可顺利连接。</li>
+<li>11、打开xshell后再连接网线，此时xshell疑似进入网络传输模式，xftp通过网线无法连接开发板。解决方法：先连接网线，再打开xshell</li>
+</ul>
+<h2 id="实验优化"><a href="#实验优化" class="headerlink" title="实验优化"></a>实验优化</h2><p>本次进行的实验还有三个可优化的地方，作者自己没有实操过，感兴趣的同学可以自己探索:</p>
+<ul>
+<li>1、xftp实现虚拟机与开发板的直连，而不是通过windows或者macos作为虚拟机和xftp的中介，可以提高xftp的便携程度。</li>
+<li>2、在U-Boot中使用<code>UMS 0 MMC 1</code>指令挂在开发板到虚拟机，可以实现在同一个虚拟机文件夹下同时操作虚拟机文件与开发板文件，可以减少实验流程，提高文件传输效率</li>
+<li>3、在代码编写上:<ul>
+<li>内存管理：目前的代码使用了结构体来保存文件头信息，如果WAV文件的文件头信息较大，可能会占用较多的内存。可以考虑使用动态内存分配，通过指针来操作文件头信息，从而减少内存占用。</li>
+<li>性能优化：目前的代码是按字节读取文件头信息的，可以考虑使用更高效的方式，如按块读取，减少IO操作次数，提高性能。</li>
+<li>命令行参数解析：目前的代码使用了简单的命令行参数解析方式，可以考虑使用更强大的命令行参数解析库，如<code>getopt_long</code>或<code>argp</code>，以支持更复杂的命令行参数选项和错误处理。</li>
+</ul>
+</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://linxt20.github.io">狄仁杰七号</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://linxt20.github.io/2023/04/21/THU-embedded-guide-Part1/">https://linxt20.github.io/2023/04/21/THU-embedded-guide-Part1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://linxt20.github.io" target="_blank">Drenj7's blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a></div><div class="post_share"><div class="social-share" data-image="https://github.com/linxt20/blog_img/blob/master/cover/cover09.jpg?raw=true" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/05/09/superset-debug-windows-pycharm/"><img class="prev-cover" src="https://github.com/linxt20/blog_img/blob/master/cover/cover15.jpg?raw=true" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">在windows上使用pycharm调试superset的配置</div></div></a></div><div class="next-post pull-right"><a href="/2023/04/21/superset-install-run/"><img class="next-cover" src="https://github.com/linxt20/blog_img/blob/master/cover/cover13.jpg?raw=true" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">superset的安装与启动——虚拟环境与docker</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/07/07/THU-embedded-guide-Part2-3/" title="THU-2023年春嵌入式课程实验指南——大作业Part2-3"><img class="cover" src="https://github.com/linxt20/blog_img/blob/master/cover/cover08.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-07-07</div><div class="title">THU-2023年春嵌入式课程实验指南——大作业Part2-3</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/Drenj7avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">狄仁杰七号</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">11</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/linxt20"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">博主回归啦，开始努力更新，欢迎催更</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E8%A6%81%E6%B1%82%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">题目要求概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2%E7%8E%AF%E5%A2%83%E7%AE%80%E4%BB%8B"><span class="toc-number">2.</span> <span class="toc-text">部署环境简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E6%B5%81%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">实验流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%81%E7%A8%8B%E6%A6%82%E8%BF%B0"><span class="toc-number">3.1.</span> <span class="toc-text">流程概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E6%93%8D%E4%BD%9C%E6%AD%A5%E9%AA%A4"><span class="toc-number">3.2.</span> <span class="toc-text">实验操作步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98%E4%B8%8E%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="toc-number">3.3.</span> <span class="toc-text">实验中遇到的问题与解决方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E4%BC%98%E5%8C%96"><span class="toc-number">4.</span> <span class="toc-text">实验优化</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/03/23/git_note/" title="git基础指令学习笔记"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover01.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="git基础指令学习笔记"/></a><div class="content"><a class="title" href="/2025/03/23/git_note/" title="git基础指令学习笔记">git基础指令学习笔记</a><time datetime="2025-03-23T08:21:16.123Z" title="发表于 2025-03-23 16:21:16">2025-03-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/23/how_to_use_icon/" title="hexo butterfly中使用Font Awesome V5的icon图标"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover02.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="hexo butterfly中使用Font Awesome V5的icon图标"/></a><div class="content"><a class="title" href="/2025/03/23/how_to_use_icon/" title="hexo butterfly中使用Font Awesome V5的icon图标">hexo butterfly中使用Font Awesome V5的icon图标</a><time datetime="2025-03-23T08:21:16.123Z" title="发表于 2025-03-23 16:21:16">2025-03-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/23/hexo_butter_note/" title="hexo的butterfly主题配置笔记"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover03.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="hexo的butterfly主题配置笔记"/></a><div class="content"><a class="title" href="/2025/03/23/hexo_butter_note/" title="hexo的butterfly主题配置笔记">hexo的butterfly主题配置笔记</a><time datetime="2025-03-23T08:21:16.123Z" title="发表于 2025-03-23 16:21:16">2025-03-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/07/07/THU-embedded-guide-Part2-3/" title="THU-2023年春嵌入式课程实验指南——大作业Part2-3"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover08.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="THU-2023年春嵌入式课程实验指南——大作业Part2-3"/></a><div class="content"><a class="title" href="/2023/07/07/THU-embedded-guide-Part2-3/" title="THU-2023年春嵌入式课程实验指南——大作业Part2-3">THU-2023年春嵌入式课程实验指南——大作业Part2-3</a><time datetime="2023-07-06T17:39:47.000Z" title="发表于 2023-07-07 01:39:47">2023-07-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/07/01/regex-note/" title="正则表达式基础语法笔记"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover07.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="正则表达式基础语法笔记"/></a><div class="content"><a class="title" href="/2023/07/01/regex-note/" title="正则表达式基础语法笔记">正则表达式基础语法笔记</a><time datetime="2023-07-01T07:01:49.000Z" title="发表于 2023-07-01 15:01:49">2023-07-01</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://github.com/linxt20/blog_img/blob/master/cover/cover09.jpg?raw=true')"><div id="footer-wrap"><div class="copyright">&copy;2021 - 2025 By 狄仁杰七号</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function addGitalkSource () {
+  const ele = document.createElement('link')
+  ele.rel = 'stylesheet'
+  ele.href= 'https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css'
+  document.getElementsByTagName('head')[0].appendChild(ele)
+}
+
+function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: 'a87b382d981e2f61ed82',
+      clientSecret: '5b37507de47d283cab4659111e11b1794c0e7451',
+      repo: 'linxt20.github.io',
+      owner: 'linxt20',
+      admin: ['linxt20'],
+      id: '5b6bda3313064e6422795f2edecc9dba',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    addGitalkSource()
+    getScript('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.innerHTML= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !true) {
+  if (true) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/fireworks.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body></html>

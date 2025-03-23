@@ -1,0 +1,291 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>VMware的网络连接——桥接与NAT的选择与配置 | Drenj7's blog</title><meta name="keywords" content="vmware"><meta name="author" content="狄仁杰七号"><meta name="copyright" content="狄仁杰七号"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="vmware以前一直只有有线网能够连接，表现出了一种玄之又玄的状态，今天通过查阅一些相关的资料，研究整理出了VMware网络连接的基础知识和基础配置，记录一下">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VMware的网络连接——桥接与NAT的选择与配置">
+<meta property="og:url" content="https://linxt20.github.io/2023/05/15/vmware-network-connect/index.html">
+<meta property="og:site_name" content="Drenj7&#39;s blog">
+<meta property="og:description" content="vmware以前一直只有有线网能够连接，表现出了一种玄之又玄的状态，今天通过查阅一些相关的资料，研究整理出了VMware网络连接的基础知识和基础配置，记录一下">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://github.com/linxt20/blog_img/blob/master/cover/cover17.jpg?raw=true">
+<meta property="article:published_time" content="2023-05-14T17:24:43.000Z">
+<meta property="article:modified_time" content="2025-03-23T08:21:16.125Z">
+<meta property="article:author" content="狄仁杰七号">
+<meta property="article:tag" content="vmware">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/linxt20/blog_img/blob/master/cover/cover17.jpg?raw=true"><link rel="shortcut icon" href="/img/Drenj7icon.png"><link rel="canonical" href="https://linxt20.github.io/2023/05/15/vmware-network-connect/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":200},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":200,"languages":{"author":"作者: 狄仁杰七号","link":"链接: ","source":"来源: Drenj7's blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'VMware的网络连接——桥接与NAT的选择与配置',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-03-23 16:21:16'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/Drenj7avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">11</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/pinacotheca/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://github.com/linxt20/blog_img/blob/master/cover/cover17.jpg?raw=true')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Drenj7's blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/pinacotheca/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">VMware的网络连接——桥接与NAT的选择与配置</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-05-14T17:24:43.000Z" title="发表于 2023-05-15 01:24:43">2023-05-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-03-23T08:21:16.125Z" title="更新于 2025-03-23 16:21:16">2025-03-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8A%80%E6%9C%AF/vmware/">vmware</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>6分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="VMware的网络连接——桥接与NAT的选择与配置"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><div class="note info modern"><p>这里作者使用的VMware版本为16.2.2 build-19200509，使用的ubuntu版本为18.04.6LTS，这里讨论的均为无线网络</p>
+</div>
+<h2 id="桥接与NAT的区别"><a href="#桥接与NAT的区别" class="headerlink" title="桥接与NAT的区别"></a>桥接与NAT的区别</h2><ul>
+<li><p>桥接模式：虚拟机的网卡将会桥接到宿主机的物理网卡，使得虚拟机拥有区别于宿主机的IP，能够作为一个独立于宿主机的设备在网络中与其他的设备进行通信。</p>
+</li>
+<li><p>NAT模式：虚拟机的网络流量通过宿主机的物理网卡转发，在这种模式下，宿主机相当于虚拟机与外界通信的一个中转站，虚拟机传输给外界的信息包需要在宿主机中修改为宿主机的ip分发出去。</p>
+</li>
+<li><p>区别：简而言之，在NAT模式下，虚拟机通过宿主机进行网络通信，而在桥接模式下，虚拟机直接与网络进行通信。基于这些区别，两者的优缺点如下：</p>
+<ul>
+<li>NAT模式可以提供一定的网络隔离，增加安全性，但可能会带来一定的网络性能损耗。</li>
+<li>桥接模式可以提供更高的网络性能，但可能需要更复杂的网络配置。</li>
+</ul>
+</li>
+</ul>
+<h2 id="使用VMware的桥接模式联网"><a href="#使用VMware的桥接模式联网" class="headerlink" title="使用VMware的桥接模式联网"></a>使用VMware的桥接模式联网</h2><p>使用桥接模式联网的操作相对比较繁琐一点，这里主要参考了CSDN上的<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_42627397/article/details/110826285">VMware虚拟机配置Ubuntu桥接方式</a>,虽然这篇博客相比于其他的博客讲述更加的简洁，但是在ip配置上反而有些过于省略，而且Ubuntu的版本和我的有一些差距，在修改网络配置的时候有些许区别。</p>
+<p>我这里写一个完整版本：</p>
+<ul>
+<li>1、首先关闭虚拟机，这里需要关机而不是挂起，否则无法修改后面的网络适配器</li>
+<li>2、按照下图的指示依次点击<code>编辑虚拟器设置</code>，<code>网络适配器</code>，<code>桥接模式</code>(下面的赋值物理网络连接状态不需要勾选),点击完后不要忘记点击下方的<code>确认</code>保存设置<br><img src="https://github.com/linxt20/blog_img/blob/master/vmware-network-connect/bridgemodelconnect1.jpg?raw=true" alt="桥接模式连接流程1"></li>
+<li>3、点击VMware左上角的<code>编辑</code>-&gt;<code>虚拟机网络编辑器</code>,随后按照下图的指示在上方选择<code>VMnet0 桥接模式</code>,随后在已桥接至的下拉框选择<code>自动</code>即可，最后记得依次点击下方的<code>应用</code>和<code>确认</code>保存设置(如果没有修改的话<code>应用</code>不用点，也没法点)<br><img src="https://github.com/linxt20/blog_img/blob/master/vmware-network-connect/bridgemodelconnect2.jpg?raw=true" alt="桥接模式连接流程2"></li>
+<li>4、虚拟机开机，在虚拟机的右上角，按照下图3的指示，打开网络设置的编辑页面(注意不同的虚拟机版本打开网络设置页面的方式可能有所不同),随后按照下图4的指示，如果网络没有打开先打开网络到ON，然后点击设置<br><img src="https://github.com/linxt20/blog_img/blob/master/vmware-network-connect/bridgemodelconnect3.jpg?raw=true" alt="桥接模式连接流程3"><br><img src="https://github.com/linxt20/blog_img/blob/master/vmware-network-connect/bridgemodelconnect4.jpg?raw=true" alt="桥接模式连接流程4"></li>
+<li>5、在宿主机中，打开cmd命令行窗口，输入指令<code>ipconfig /all</code>可以显示出所有的网络接口的详细信息，找到自己当前正在使用的无线网，如下图5，在虚拟机中，按照下图6的流程点击进入IPv4的配置页面，选择Manual(手动模式)，**这里需要注意的是 Address的ip地址需要和宿主机的ip地址有所不同，例如我的宿主机现在ip地址是<code>192.168.43.78</code>,那我给虚拟机设置的ip地址可以是<code>192.168.43.77</code>**，后面的子网、网关和DNS根据图5获取的信息填写即可。完成后点击右上角的apply(应用)保存设置。<br><img src="https://github.com/linxt20/blog_img/blob/master/vmware-network-connect/bridgemodelconnect5.jpg?raw=true" alt="桥接模式连接流程5"><br><img src="https://github.com/linxt20/blog_img/blob/master/vmware-network-connect/bridgemodelconnect6.jpg?raw=true" alt="桥接模式连接流程6"></li>
+<li>6、现在虚拟机中已经可以正常访问网络，这里随后复制一个CSDN的网址，如下：<br><img src="https://github.com/linxt20/blog_img/blob/master/vmware-network-connect/NATconnectsuccess.jpg?raw=true" alt="成功连接网络"></li>
+</ul>
+<p>这个部分会出现的问题有下面几个：</p>
+<ul>
+<li><p>1、在校园网下，使用桥接模式，经过上面的配置后，虚拟机中依旧无法联网(可能不是所有的校园网都有这个问题，至少作者使用的校园网存在这个问题):</p>
+<ul>
+<li>可能原因: 无线路由器和接入点通常会限制哪些设备可以通过MAC地址连接。当虚拟机尝试以其自己的MAC地址通过桥接模式连接时，无线网络可能不会接受这个新的设备。</li>
+</ul>
+</li>
+<li><p>2、配置完后虚拟机中可以联网，但是宿主机中无法联网，关闭虚拟机当中的网络连接，宿主机中可以联网</p>
+<ul>
+<li>原因：配置过程的第五步中，没有按照加粗字体的提示，错误地设置虚拟机的ip和宿主机一样，这样由于桥接模式相当于一个独立的设备，虚拟机抢占了宿主机的ip，导致宿主机无法联网</li>
+<li>解决方式：按照配置过程的第五步的加粗字体要求，设置虚拟机的ip地址与宿主机的ip地址不同</li>
+</ul>
+</li>
+<li><p>3、配置完后无法联网(先排除了校园网的情况)</p>
+<ul>
+<li>可能原因：可能刚刚完成的配置还没有被同步应用到虚拟机中</li>
+<li>解决方式：这个问题部分博客说是需要重启虚拟机，这是不必要的，这里断开网络连接后重新启动网络连接就可以</li>
+</ul>
+</li>
+<li><p>4、有的读者可能会好奇，为什么通过这种配置不需要输入无线网络的密码，虚拟机就可以访问</p>
+<ul>
+<li>原因：这是因为对于桥接模式而言，桥接模式将虚拟机地网卡桥接到了宿主机的网卡上，两者使用的网络连接是相同的，也就是在宿主机上已经输入过密码并且连接成功的无线网络，在虚拟机当中可以直接利用这个已经建立的连接进行网络访问。虚拟机并没有建立一个新的独立的连接。</li>
+</ul>
+</li>
+</ul>
+<h2 id="使用VMware的NAT模式联网"><a href="#使用VMware的NAT模式联网" class="headerlink" title="使用VMware的NAT模式联网"></a>使用VMware的NAT模式联网</h2><p>使用NAT模式联网的操作非常简洁，流程如下：</p>
+<ul>
+<li>1、首先关闭虚拟机，这里需要关机而不是挂起，否则无法修改后面的网络适配器</li>
+<li>2、按照下面的指示依次点击<code>编辑虚拟器设置</code>，<code>网络适配器</code>，<code>NAT模式</code>,点击完后不要忘记点击下方的<code>确认</code>保存设置<br><img src="https://github.com/linxt20/blog_img/blob/master/vmware-network-connect/NATmodelconnect.jpg?raw=true" alt="NAT模式联网流程"></li>
+<li>3、随后开机即显示联网，随手复制个CSDN的网址进去可以正常访问<br><img src="https://github.com/linxt20/blog_img/blob/master/vmware-network-connect/NATconnectsuccess.jpg?raw=true" alt="成功连接网络"></li>
+</ul>
+<p>这个部分可能会出现的问题有：</p>
+<ul>
+<li>1、读者尝试完前面的桥接模式，想要也尝试一下NAT模式，但是发现按照上面的配置完，无法连接网络<ul>
+<li>原因：桥接模式中对于虚拟机中的网络配置没有清除，两者之间存在冲突</li>
+<li>解决方式：在虚拟机的网络设置当中，按照下图的操作后，点击应用，关闭网络连接再重启即可 <img src="https://github.com/linxt20/blog_img/blob/master/vmware-network-connect/closebridgemodel.jpg?raw=true" alt="关闭桥接模式的设置"></li>
+</ul>
+</li>
+</ul>
+<h2 id="代理配置"><a href="#代理配置" class="headerlink" title="代理配置"></a>代理配置</h2><p>这里暂时还没有解决，等待后续补充解决</p>
+<p>目前有两个解决方向：</p>
+<ul>
+<li><p>主机代理共享：</p>
+<ul>
+<li>目前主机代理共享遇到的问题是：主机机器的防火墙可能阻止虚拟机通过VPN或代理访问网络。可能需要在防火墙中允许Clash代理端口的入站和出站连接。</li>
+</ul>
+</li>
+<li><p>VMware独立配置代理</p>
+<ul>
+<li>这个部分需要在VMware当中安装VPN软件，随后在桥接模式下使用，应该可以成功实现代理，后续进行测试后会将结果记录在这里。但是这个方式还需要在虚拟机单独配置VPN，可能没有主机代理共享方式的方便。</li>
+</ul>
+</li>
+</ul>
+<p>这里还有一个不推荐的方式：</p>
+<ul>
+<li>这个方式是CSDN社区文章——<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_45934869/article/details/129100574">VMware桥接模式虚拟机上网问题踩坑</a>中提出来了，这篇文章当中提出在宿主机的Clash中打开<code>Allow LAN</code>的方式让虚拟机共享主机的代理，其中Clash的”Allow LAN”是一中 允许局域网(LAN)内的其他设备连接到运行Clash的设备，并使用它作为代理服务器的方式。但是不论是宿主机是连接了手机热点还是校园网，在这个局域网内，其他连接了手机热点还是校园网的设备都可以走这个宿主机的代理，这样造成的一方面是流量的问题，另一方面还是宿主机的网络安全问题。所以很不推荐这种方式实现代理共享。</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://linxt20.github.io">狄仁杰七号</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://linxt20.github.io/2023/05/15/vmware-network-connect/">https://linxt20.github.io/2023/05/15/vmware-network-connect/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://linxt20.github.io" target="_blank">Drenj7's blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/vmware/">vmware</a></div><div class="post_share"><div class="social-share" data-image="https://github.com/linxt20/blog_img/blob/master/cover/cover17.jpg?raw=true" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/07/01/regex-note/"><img class="prev-cover" src="https://github.com/linxt20/blog_img/blob/master/cover/cover07.jpg?raw=true" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">正则表达式基础语法笔记</div></div></a></div><div class="next-post pull-right"><a href="/2023/05/09/superset-debug-windows-pycharm/"><img class="next-cover" src="https://github.com/linxt20/blog_img/blob/master/cover/cover15.jpg?raw=true" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">在windows上使用pycharm调试superset的配置</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/Drenj7avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">狄仁杰七号</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">11</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/linxt20"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">博主回归啦，开始努力更新，欢迎催更</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A1%A5%E6%8E%A5%E4%B8%8ENAT%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.</span> <span class="toc-text">桥接与NAT的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8VMware%E7%9A%84%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F%E8%81%94%E7%BD%91"><span class="toc-number">2.</span> <span class="toc-text">使用VMware的桥接模式联网</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8VMware%E7%9A%84NAT%E6%A8%A1%E5%BC%8F%E8%81%94%E7%BD%91"><span class="toc-number">3.</span> <span class="toc-text">使用VMware的NAT模式联网</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%90%86%E9%85%8D%E7%BD%AE"><span class="toc-number">4.</span> <span class="toc-text">代理配置</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/03/23/git_note/" title="git基础指令学习笔记"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover01.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="git基础指令学习笔记"/></a><div class="content"><a class="title" href="/2025/03/23/git_note/" title="git基础指令学习笔记">git基础指令学习笔记</a><time datetime="2025-03-23T08:21:16.123Z" title="发表于 2025-03-23 16:21:16">2025-03-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/23/how_to_use_icon/" title="hexo butterfly中使用Font Awesome V5的icon图标"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover02.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="hexo butterfly中使用Font Awesome V5的icon图标"/></a><div class="content"><a class="title" href="/2025/03/23/how_to_use_icon/" title="hexo butterfly中使用Font Awesome V5的icon图标">hexo butterfly中使用Font Awesome V5的icon图标</a><time datetime="2025-03-23T08:21:16.123Z" title="发表于 2025-03-23 16:21:16">2025-03-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/23/hexo_butter_note/" title="hexo的butterfly主题配置笔记"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover03.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="hexo的butterfly主题配置笔记"/></a><div class="content"><a class="title" href="/2025/03/23/hexo_butter_note/" title="hexo的butterfly主题配置笔记">hexo的butterfly主题配置笔记</a><time datetime="2025-03-23T08:21:16.123Z" title="发表于 2025-03-23 16:21:16">2025-03-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/07/07/THU-embedded-guide-Part2-3/" title="THU-2023年春嵌入式课程实验指南——大作业Part2-3"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover08.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="THU-2023年春嵌入式课程实验指南——大作业Part2-3"/></a><div class="content"><a class="title" href="/2023/07/07/THU-embedded-guide-Part2-3/" title="THU-2023年春嵌入式课程实验指南——大作业Part2-3">THU-2023年春嵌入式课程实验指南——大作业Part2-3</a><time datetime="2023-07-06T17:39:47.000Z" title="发表于 2023-07-07 01:39:47">2023-07-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/07/01/regex-note/" title="正则表达式基础语法笔记"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover07.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="正则表达式基础语法笔记"/></a><div class="content"><a class="title" href="/2023/07/01/regex-note/" title="正则表达式基础语法笔记">正则表达式基础语法笔记</a><time datetime="2023-07-01T07:01:49.000Z" title="发表于 2023-07-01 15:01:49">2023-07-01</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://github.com/linxt20/blog_img/blob/master/cover/cover17.jpg?raw=true')"><div id="footer-wrap"><div class="copyright">&copy;2021 - 2025 By 狄仁杰七号</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function addGitalkSource () {
+  const ele = document.createElement('link')
+  ele.rel = 'stylesheet'
+  ele.href= 'https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css'
+  document.getElementsByTagName('head')[0].appendChild(ele)
+}
+
+function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: 'a87b382d981e2f61ed82',
+      clientSecret: '5b37507de47d283cab4659111e11b1794c0e7451',
+      repo: 'linxt20.github.io',
+      owner: 'linxt20',
+      admin: ['linxt20'],
+      id: 'ed28a08a35d13d300f325e98b46dbfae',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    addGitalkSource()
+    getScript('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.innerHTML= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !true) {
+  if (true) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/fireworks.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body></html>
