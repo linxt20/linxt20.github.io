@@ -1,0 +1,266 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>用 git cherry-pick 把指定 commit 复制到另一个分支 | Drenj7's blog</title><meta name="keywords" content="git"><meta name="author" content="狄仁杰七号"><meta name="copyright" content="狄仁杰七号"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="把 master 分支上的某个 commit 单独搬到 feature 分支，用 cherry-pick 是最直接的做法。这里整理一份从切分支、定位 hash、解决冲突到推送远端的完整步骤。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用 git cherry-pick 把指定 commit 复制到另一个分支">
+<meta property="og:url" content="https://linxt20.github.io/2023/08/07/git_cherry_pick/index.html">
+<meta property="og:site_name" content="Drenj7&#39;s blog">
+<meta property="og:description" content="把 master 分支上的某个 commit 单独搬到 feature 分支，用 cherry-pick 是最直接的做法。这里整理一份从切分支、定位 hash、解决冲突到推送远端的完整步骤。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://github.com/linxt20/blog_img/blob/master/cover/cover06.jpg?raw=true">
+<meta property="article:published_time" content="2023-08-07T13:30:00.000Z">
+<meta property="article:modified_time" content="2023-08-07T13:30:00.000Z">
+<meta property="article:author" content="狄仁杰七号">
+<meta property="article:tag" content="git">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/linxt20/blog_img/blob/master/cover/cover06.jpg?raw=true"><link rel="shortcut icon" href="/img/Drenj7icon.png"><link rel="canonical" href="https://linxt20.github.io/2023/08/07/git_cherry_pick/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":200},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":200,"languages":{"author":"作者: 狄仁杰七号","link":"链接: ","source":"来源: Drenj7's blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '用 git cherry-pick 把指定 commit 复制到另一个分支',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-08-07 21:30:00'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/Drenj7avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">12</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/pinacotheca/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://github.com/linxt20/blog_img/blob/master/cover/cover06.jpg?raw=true')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Drenj7's blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/pinacotheca/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">用 git cherry-pick 把指定 commit 复制到另一个分支</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-08-07T13:30:00.000Z" title="发表于 2023-08-07 21:30:00">2023-08-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-08-07T13:30:00.000Z" title="更新于 2023-08-07 21:30:00">2023-08-07</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8A%80%E6%9C%AF/git/">git</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">615</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>2分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="用 git cherry-pick 把指定 commit 复制到另一个分支"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><div class="note info modern"><p>日常开发里经常会遇到这种场景：在 <code>master</code> 上修了个小 bug，但还有另一个长期分支 <code>add_function</code> 也需要这个修复，可又不想把整个 <code>master</code> 合进去。<code>git cherry-pick</code> 正是为这种「只挑一个 commit 搬走」的需求设计的。</p>
+</div>
+
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><ul>
+<li>想把某个分支上的单个或少数几个 commit 应用到当前分支；</li>
+<li>不希望像 <code>merge</code> 那样把整条历史一并带过来；</li>
+<li>也不想像 <code>rebase</code> 那样改写整条分支的提交。</li>
+</ul>
+<h2 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a>操作步骤</h2><h3 id="1-同步本地-master"><a href="#1-同步本地-master" class="headerlink" title="1. 同步本地 master"></a>1. 同步本地 master</h3><p>确保源分支是最新的，避免 cherry-pick 到已被覆盖或回滚的旧 commit：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git checkout master</span><br><span class="line">git pull origin master</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-切到目标分支"><a href="#2-切到目标分支" class="headerlink" title="2. 切到目标分支"></a>2. 切到目标分支</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout add_function</span><br></pre></td></tr></table></figure>
+
+<p>后续 <code>cherry-pick</code> 出来的新 commit 会落在当前所在的分支上。</p>
+<h3 id="3-找到要复制的-commit-hash"><a href="#3-找到要复制的-commit-hash" class="headerlink" title="3. 找到要复制的 commit hash"></a>3. 找到要复制的 commit hash</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">log</span> --oneline master</span><br></pre></td></tr></table></figure>
+
+<p><code>--oneline</code> 一行一个 commit，便于快速定位。复制出目标 commit 的前 7~12 位 hash 即可。</p>
+<h3 id="4-执行-cherry-pick"><a href="#4-执行-cherry-pick" class="headerlink" title="4. 执行 cherry-pick"></a>4. 执行 cherry-pick</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git cherry-pick &lt;commit-hash&gt;</span><br></pre></td></tr></table></figure>
+
+<p>如果要一次搬多个，可以连写：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git cherry-pick &lt;hash1&gt; &lt;hash2&gt; &lt;hash3&gt;</span><br></pre></td></tr></table></figure>
+
+<p>或者用区间（注意是左开右闭，不包含 <code>A</code>，包含 <code>B</code>）：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git cherry-pick A..B</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-推送到远端"><a href="#5-推送到远端" class="headerlink" title="5. 推送到远端"></a>5. 推送到远端</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push origin add_function</span><br></pre></td></tr></table></figure>
+
+<h2 id="遇到冲突怎么办"><a href="#遇到冲突怎么办" class="headerlink" title="遇到冲突怎么办"></a>遇到冲突怎么办</h2><p><code>cherry-pick</code> 在被搬的 commit 与目标分支有差异时可能产生冲突。Git 会暂停操作并把冲突文件标出来，处理流程如下：</p>
+<ol>
+<li><p>用 <code>git status</code> 查看冲突文件；</p>
+</li>
+<li><p>手动编辑文件，删掉 <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code> &#x2F; <code>=======</code> &#x2F; <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> 标记，保留想要的内容；</p>
+</li>
+<li><p>把解决后的文件加入暂存区：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git add &lt;file&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>继续 cherry-pick：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git cherry-pick --<span class="built_in">continue</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>如果中途想放弃整个操作：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git cherry-pick --abort</span><br></pre></td></tr></table></figure>
+
+<p>如果想跳过当前这个有冲突的 commit、继续后面的：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git cherry-pick --skip</span><br></pre></td></tr></table></figure>
+
+<h2 id="几个小提醒"><a href="#几个小提醒" class="headerlink" title="几个小提醒"></a>几个小提醒</h2><ul>
+<li><p>cherry-pick 出来的 commit hash 会变——它在新分支上是一次新的提交，作者信息和 message 保留，但父 commit 不同。</p>
+</li>
+<li><p>同一个改动如果先 cherry-pick 再 merge 回去，可能产生「重复提交」的视觉冗余，但通常不会冲突；如果两边后续又各自修改了同一段代码，再合并时仍可能冲突。</p>
+</li>
+<li><p>如果想保留「这个 commit 是从哪儿挑过来的」信息，加 <code>-x</code> 选项，会在 commit message 里附上 <code>(cherry picked from commit ...)</code>：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git cherry-pick -x &lt;commit-hash&gt;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://git-scm.com/docs/git-cherry-pick">Git 官方文档 - git-cherry-pick</a></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://linxt20.github.io">狄仁杰七号</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://linxt20.github.io/2023/08/07/git_cherry_pick/">https://linxt20.github.io/2023/08/07/git_cherry_pick/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://linxt20.github.io" target="_blank">Drenj7's blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/git/">git</a></div><div class="post_share"><div class="social-share" data-image="https://github.com/linxt20/blog_img/blob/master/cover/cover06.jpg?raw=true" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/03/23/hexo_butter_note/"><img class="prev-cover" src="https://github.com/linxt20/blog_img/blob/master/cover/cover03.jpg?raw=true" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">hexo的butterfly主题配置笔记</div></div></a></div><div class="next-post pull-right"><a href="/2023/07/07/THU-embedded-guide-Part2-3/"><img class="next-cover" src="https://github.com/linxt20/blog_img/blob/master/cover/cover08.jpg?raw=true" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">THU-2023年春嵌入式课程实验指南——大作业Part2-3</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2025/03/23/git_note/" title="git基础指令学习笔记"><img class="cover" src="https://github.com/linxt20/blog_img/blob/master/cover/cover01.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-03-23</div><div class="title">git基础指令学习笔记</div></div></a></div><div><a href="/2023/03/25/solution-github-push/" title="解决gitpush指令不稳定提交问题"><img class="cover" src="https://github.com/linxt20/blog_img/blob/master/cover/cover06.jpg?raw=true" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-03-25</div><div class="title">解决gitpush指令不稳定提交问题</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/Drenj7avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">狄仁杰七号</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">12</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/linxt20"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">咕咕咕，博主正在努力更新中...</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">使用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E6%AD%A5%E9%AA%A4"><span class="toc-number">2.</span> <span class="toc-text">操作步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%90%8C%E6%AD%A5%E6%9C%AC%E5%9C%B0-master"><span class="toc-number">2.1.</span> <span class="toc-text">1. 同步本地 master</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%88%87%E5%88%B0%E7%9B%AE%E6%A0%87%E5%88%86%E6%94%AF"><span class="toc-number">2.2.</span> <span class="toc-text">2. 切到目标分支</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%89%BE%E5%88%B0%E8%A6%81%E5%A4%8D%E5%88%B6%E7%9A%84-commit-hash"><span class="toc-number">2.3.</span> <span class="toc-text">3. 找到要复制的 commit hash</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%89%A7%E8%A1%8C-cherry-pick"><span class="toc-number">2.4.</span> <span class="toc-text">4. 执行 cherry-pick</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E6%8E%A8%E9%80%81%E5%88%B0%E8%BF%9C%E7%AB%AF"><span class="toc-number">2.5.</span> <span class="toc-text">5. 推送到远端</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%81%87%E5%88%B0%E5%86%B2%E7%AA%81%E6%80%8E%E4%B9%88%E5%8A%9E"><span class="toc-number">3.</span> <span class="toc-text">遇到冲突怎么办</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%A0%E4%B8%AA%E5%B0%8F%E6%8F%90%E9%86%92"><span class="toc-number">4.</span> <span class="toc-text">几个小提醒</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/07/15/asof_problem_in%20multiseries_aligned/" title="merge_asof 在多序列对齐下的效率问题"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover11.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="merge_asof 在多序列对齐下的效率问题"/></a><div class="content"><a class="title" href="/2025/07/15/asof_problem_in%20multiseries_aligned/" title="merge_asof 在多序列对齐下的效率问题">merge_asof 在多序列对齐下的效率问题</a><time datetime="2025-07-15T04:00:00.000Z" title="发表于 2025-07-15 12:00:00">2025-07-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/23/git_note/" title="git基础指令学习笔记"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover01.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="git基础指令学习笔记"/></a><div class="content"><a class="title" href="/2025/03/23/git_note/" title="git基础指令学习笔记">git基础指令学习笔记</a><time datetime="2025-03-23T08:21:16.123Z" title="发表于 2025-03-23 16:21:16">2025-03-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/23/how_to_use_icon/" title="hexo butterfly中使用Font Awesome V5的icon图标"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover02.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="hexo butterfly中使用Font Awesome V5的icon图标"/></a><div class="content"><a class="title" href="/2025/03/23/how_to_use_icon/" title="hexo butterfly中使用Font Awesome V5的icon图标">hexo butterfly中使用Font Awesome V5的icon图标</a><time datetime="2025-03-23T08:21:16.123Z" title="发表于 2025-03-23 16:21:16">2025-03-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/23/hexo_butter_note/" title="hexo的butterfly主题配置笔记"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover03.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="hexo的butterfly主题配置笔记"/></a><div class="content"><a class="title" href="/2025/03/23/hexo_butter_note/" title="hexo的butterfly主题配置笔记">hexo的butterfly主题配置笔记</a><time datetime="2025-03-23T08:21:16.123Z" title="发表于 2025-03-23 16:21:16">2025-03-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/08/07/git_cherry_pick/" title="用 git cherry-pick 把指定 commit 复制到另一个分支"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover06.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="用 git cherry-pick 把指定 commit 复制到另一个分支"/></a><div class="content"><a class="title" href="/2023/08/07/git_cherry_pick/" title="用 git cherry-pick 把指定 commit 复制到另一个分支">用 git cherry-pick 把指定 commit 复制到另一个分支</a><time datetime="2023-08-07T13:30:00.000Z" title="发表于 2023-08-07 21:30:00">2023-08-07</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://github.com/linxt20/blog_img/blob/master/cover/cover06.jpg?raw=true')"><div id="footer-wrap"><div class="copyright">&copy;2021 - 2026 By 狄仁杰七号</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function addGitalkSource () {
+  const ele = document.createElement('link')
+  ele.rel = 'stylesheet'
+  ele.href= 'https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css'
+  document.getElementsByTagName('head')[0].appendChild(ele)
+}
+
+function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: 'a87b382d981e2f61ed82',
+      clientSecret: '5b37507de47d283cab4659111e11b1794c0e7451',
+      repo: 'linxt20.github.io',
+      owner: 'linxt20',
+      admin: ['linxt20'],
+      id: '315b097d24c3f09390db10240df182c3',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    addGitalkSource()
+    getScript('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.innerHTML= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !true) {
+  if (true) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/fireworks.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body></html>
