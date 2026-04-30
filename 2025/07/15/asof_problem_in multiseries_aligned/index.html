@@ -1,0 +1,368 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>merge_asof 在多序列对齐下的效率问题 | Drenj7's blog</title><meta name="keywords" content="timeseries"><meta name="author" content="狄仁杰七号"><meta name="copyright" content="狄仁杰七号"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="merge_asof 一般只处理两个序列，这在多序列对齐场景下会有效率问题。同样的问题在 pandas 的 concat、merge、join 上也会发生。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="merge_asof 在多序列对齐下的效率问题">
+<meta property="og:url" content="https://linxt20.github.io/2025/07/15/asof_problem_in%20multiseries_aligned/index.html">
+<meta property="og:site_name" content="Drenj7&#39;s blog">
+<meta property="og:description" content="merge_asof 一般只处理两个序列，这在多序列对齐场景下会有效率问题。同样的问题在 pandas 的 concat、merge、join 上也会发生。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://github.com/linxt20/blog_img/blob/master/cover/cover11.jpg?raw=true">
+<meta property="article:published_time" content="2025-07-15T04:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-30T10:15:19.587Z">
+<meta property="article:author" content="狄仁杰七号">
+<meta property="article:tag" content="timeseries">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/linxt20/blog_img/blob/master/cover/cover11.jpg?raw=true"><link rel="shortcut icon" href="/img/Drenj7icon.png"><link rel="canonical" href="https://linxt20.github.io/2025/07/15/asof_problem_in%20multiseries_aligned/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":200},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":200,"languages":{"author":"作者: 狄仁杰七号","link":"链接: ","source":"来源: Drenj7's blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'merge_asof 在多序列对齐下的效率问题',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2026-04-30 18:15:19'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/Drenj7avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">12</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/pinacotheca/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://github.com/linxt20/blog_img/blob/master/cover/cover11.jpg?raw=true')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Drenj7's blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/pinacotheca/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">merge_asof 在多序列对齐下的效率问题</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-07-15T04:00:00.000Z" title="发表于 2025-07-15 12:00:00">2025-07-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-04-30T10:15:19.587Z" title="更新于 2026-04-30 18:15:19">2026-04-30</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8A%80%E6%9C%AF/timeseries/">timeseries</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>6分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="merge_asof 在多序列对齐下的效率问题"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><div class="note info modern"><p>近期处理的工作涉及到将多个序列在时间轴上对齐，<code>pandas.merge_asof</code> 是一个很常用的选择，但是当待对齐的序列数量增多时，它的写法和性能都会出现问题。这里以 <code>merge_asof</code> 为主进行分析，<code>merge</code> &#x2F; <code>join</code> 是同类问题，<code>concat</code> 因为支持多参数所以情况略有不同，但同样存在「写成 pairwise 累积」时的性能陷阱。</p>
+</div>
+
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>最近遇到的工作场景是这样的：</p>
+<ol>
+<li>从数据库里读出 18 个参数各自的 <code>(time, value)</code> 序列；</li>
+<li>用 <code>pandas.merge_asof</code> 把这 18 个序列在时间轴上对齐成一张宽表；</li>
+<li>多个时间段重复 1、2 之后，再用 <code>pandas.concat</code> 沿时间轴把若干段拼接起来。</li>
+</ol>
+<p>加载全量训练数据时延迟异常高。给三段流程分别加上计时之后发现：<strong>数据库读取占比并不大，绝大部分时间都消耗在第 2 步的对齐和第 3 步的拼接上。</strong></p>
+<p>问题的共同点是：API 设计上偏向「两两操作」，使用者很容易写成「滚雪球」式的累积循环 <code>out = op(out, frames[i])</code>，从而引入不必要的 $O(M^2)$ 拷贝。</p>
+<h2 id="merge-asof-接口回顾"><a href="#merge-asof-接口回顾" class="headerlink" title="merge_asof 接口回顾"></a><code>merge_asof</code> 接口回顾</h2><p><code>pandas.merge_asof(left, right, on=..., direction=...)</code> 做的是「按近邻键 (asof) 关联两个有序表」：对 <code>left</code> 的每一行，按 <code>on</code> 列在 <code>right</code> 里找方向上最近的一行（<code>backward</code> &#x2F; <code>forward</code> &#x2F; <code>nearest</code>），把对应字段拼过来。</p>
+<p>关键点：</p>
+<ul>
+<li>它<strong>只接受两个 DataFrame</strong>，没有 N-ary 重载；</li>
+<li>输出的行数 &#x3D; <code>left</code> 的行数（不是并集）；</li>
+<li>对 <code>left</code> 和 <code>right</code> 都要求按 <code>on</code> 列已排序。</li>
+</ul>
+<p>所以多序列对齐的常见写法就是「以第一个序列为参考时间轴，循环 <code>merge_asof</code> 进去」：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">merge_asof_chain</span>(<span class="params">frames</span>):</span><br><span class="line">    out = frames[<span class="number">0</span>]</span><br><span class="line">    <span class="keyword">for</span> f <span class="keyword">in</span> frames[<span class="number">1</span>:]:</span><br><span class="line">        out = pd.merge_asof(out, f, on=<span class="string">&quot;time&quot;</span>, direction=<span class="string">&quot;backward&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> out</span><br></pre></td></tr></table></figure>
+
+<h2 id="为什么这样写会慢"><a href="#为什么这样写会慢" class="headerlink" title="为什么这样写会慢"></a>为什么这样写会慢</h2><p>设有 $M$ 个序列，每个长度大约为 $N$。在第 $i$ 次循环里：</p>
+<ul>
+<li><code>out</code> 已经有 $i$ 列、$N$ 行；</li>
+<li><code>pd.merge_asof(out, f_i, ...)</code> 内部需要重新分配一张大小为 $N \times (i+1)$ 的结果表，把 <code>out</code> 的 $i$ 列<strong>整列拷贝</strong>进去，再拼上新一列。</li>
+</ul>
+<p>把每一步的拷贝代价加起来：</p>
+<p>$$<br>\sum_{i&#x3D;1}^{M-1} O(N \cdot i) ;&#x3D;; O(N \cdot M^2)<br>$$</p>
+<p>而真正「有用」的工作（在 $f_i$ 里查找 asof 对应的下标）只有 $O(M \cdot N \log N)$。当 $M$ 增长时，<strong>前者主导，复杂度从线性退化到平方</strong>。<code>merge</code> &#x2F; <code>join</code> 的 pairwise 累积写法是同样的道理。</p>
+<h2 id="一种朴素的多路对齐实现"><a href="#一种朴素的多路对齐实现" class="headerlink" title="一种朴素的多路对齐实现"></a>一种朴素的多路对齐实现</h2><p>既然瓶颈是「重复把累积结果拷来拷去」，那么把所有目标列一次性算好、最后再组装一次 DataFrame 即可。对每个非参考序列做一次 <code>np.searchsorted</code>（这就是 <code>direction=&quot;backward&quot;</code> 的本质：查不大于目标时间的最大下标），然后用花式索引取值：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">kway_align</span>(<span class="params">frames</span>):</span><br><span class="line">    ref_t = frames[<span class="number">0</span>][<span class="string">&quot;time&quot;</span>].to_numpy()</span><br><span class="line">    cols = &#123;<span class="string">&quot;time&quot;</span>: ref_t&#125;</span><br><span class="line">    first_name = [c <span class="keyword">for</span> c <span class="keyword">in</span> frames[<span class="number">0</span>].columns <span class="keyword">if</span> c != <span class="string">&quot;time&quot;</span>][<span class="number">0</span>]</span><br><span class="line">    cols[first_name] = frames[<span class="number">0</span>][first_name].to_numpy()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> f <span class="keyword">in</span> frames[<span class="number">1</span>:]:</span><br><span class="line">        name = [c <span class="keyword">for</span> c <span class="keyword">in</span> f.columns <span class="keyword">if</span> c != <span class="string">&quot;time&quot;</span>][<span class="number">0</span>]</span><br><span class="line">        t_arr = f[<span class="string">&quot;time&quot;</span>].to_numpy()</span><br><span class="line">        v_arr = f[name].to_numpy()</span><br><span class="line">        <span class="comment"># backward asof: largest index i such that t_arr[i] &lt;= ref_t</span></span><br><span class="line">        idx = np.searchsorted(t_arr, ref_t, side=<span class="string">&quot;right&quot;</span>) - <span class="number">1</span></span><br><span class="line">        out = np.full(ref_t.shape, np.nan, dtype=v_arr.dtype)</span><br><span class="line">        valid = idx &gt;= <span class="number">0</span></span><br><span class="line">        out[valid] = v_arr[idx[valid]]</span><br><span class="line">        cols[name] = out</span><br><span class="line">    <span class="keyword">return</span> pd.DataFrame(cols)</span><br></pre></td></tr></table></figure>
+
+<p>复杂度退回到了 $O(M \cdot N \log N)$，且 DataFrame 只构造一次。值得注意的几点：</p>
+<ul>
+<li>这里假设所有 <code>frames</code> 都已经按 <code>time</code> 升序，否则需要先排序；</li>
+<li>只覆盖 <code>direction=&quot;backward&quot;</code>，<code>forward</code> &#x2F; <code>nearest</code> 也可以用 <code>searchsorted</code> 表达；</li>
+<li><code>tolerance</code> 等参数没有实现，需要时可以在 <code>idx</code> 之后做一次 mask；</li>
+<li>输出对齐到 <code>frames[0]</code> 的时间轴，与 <code>merge_asof_chain</code> 完全一致，方便对照。</li>
+</ul>
+<h2 id="性能对比"><a href="#性能对比" class="headerlink" title="性能对比"></a>性能对比</h2><p>测试条件：每个序列约 20k 个不规则时间戳，<code>float32</code> 值，序列数 $M$ 取 2 &#x2F; 5 &#x2F; 10 &#x2F; 18 &#x2F; 20 &#x2F; 50；每组取 3 次中的最快值；脚本见文末。结果如下：</p>
+<table>
+<thead>
+<tr>
+<th>$M$</th>
+<th align="right"><code>merge_asof</code> 链式 (s)</th>
+<th align="right">手写 K-way (s)</th>
+<th align="right">加速比</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2</td>
+<td align="right">0.0033</td>
+<td align="right">0.0033</td>
+<td align="right">1.00x</td>
+</tr>
+<tr>
+<td>5</td>
+<td align="right">0.0156</td>
+<td align="right">0.0126</td>
+<td align="right">1.23x</td>
+</tr>
+<tr>
+<td>10</td>
+<td align="right">0.0359</td>
+<td align="right">0.0293</td>
+<td align="right">1.23x</td>
+</tr>
+<tr>
+<td>18</td>
+<td align="right">0.0826</td>
+<td align="right">0.0535</td>
+<td align="right">1.54x</td>
+</tr>
+<tr>
+<td>20</td>
+<td align="right">0.1054</td>
+<td align="right">0.0617</td>
+<td align="right">1.71x</td>
+</tr>
+<tr>
+<td>50</td>
+<td align="right">0.4174</td>
+<td align="right">0.1584</td>
+<td align="right">2.64x</td>
+</tr>
+</tbody></table>
+<p>可以看到：</p>
+<ul>
+<li>$M &#x3D; 2$ 时两者基本持平，毕竟手写实现在序列数量很少时没什么优势；</li>
+<li>在我实际遇到的 $M &#x3D; 18$ 规模上已经能拿到约 1.5x 的提升；</li>
+<li>$M$ 越大差距越明显，到 $M &#x3D; 50$ 时手写实现快了 2.6x，并且趋势仍在扩大——这正是上一节里那个 $O(N M^2)$ 项在发挥作用。</li>
+</ul>
+<p><img src="https://github.com/linxt20/blog_img/blob/master/asof_problem_in_multiseries_aligned/merge_asof_vs_kway.png?raw=true" alt="merge_asof 链式 vs 手写多路对齐"></p>
+<h2 id="concat-也有同样的问题"><a href="#concat-也有同样的问题" class="headerlink" title="concat 也有同样的问题"></a><code>concat</code> 也有同样的问题</h2><p><code>pandas.concat</code> 表面上看「天然支持多参数」，似乎不会落入上面的陷阱，但实际工程里很容易写成 pairwise 累积：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 反例：每次循环都重新分配整张大表</span></span><br><span class="line">out = frames[<span class="number">0</span>]</span><br><span class="line"><span class="keyword">for</span> f <span class="keyword">in</span> frames[<span class="number">1</span>:]:</span><br><span class="line">    out = pd.concat([out, f], axis=<span class="number">0</span>, ignore_index=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+<p>正确写法是把所有 frame 一次性传给 <code>concat</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">out = pd.concat(frames, axis=<span class="number">0</span>, ignore_index=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+<p>每段长度 5k 行，结果如下：</p>
+<table>
+<thead>
+<tr>
+<th>$K$</th>
+<th align="right"><code>concat(frames)</code> 一次 (s)</th>
+<th align="right">累积写法 (s)</th>
+<th align="right">累积&#x2F;一次</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2</td>
+<td align="right">0.0003</td>
+<td align="right">0.0002</td>
+<td align="right">0.75x</td>
+</tr>
+<tr>
+<td>5</td>
+<td align="right">0.0004</td>
+<td align="right">0.0010</td>
+<td align="right">2.58x</td>
+</tr>
+<tr>
+<td>10</td>
+<td align="right">0.0007</td>
+<td align="right">0.0046</td>
+<td align="right">6.46x</td>
+</tr>
+<tr>
+<td>18</td>
+<td align="right">0.0011</td>
+<td align="right">0.0103</td>
+<td align="right">9.07x</td>
+</tr>
+<tr>
+<td>50</td>
+<td align="right">0.0052</td>
+<td align="right">0.0890</td>
+<td align="right">16.97x</td>
+</tr>
+<tr>
+<td>100</td>
+<td align="right">0.0111</td>
+<td align="right">0.3673</td>
+<td align="right">33.00x</td>
+</tr>
+</tbody></table>
+<p>差距随 $K$ 急剧放大。原因和上面一样：每次 <code>pd.concat([out, f])</code> 都要为 <code>out + f</code> 的总长度重新分配缓冲区并整段拷贝，累计开销又是 $O(K^2)$；而一次性 <code>pd.concat(frames)</code> 只分配并写入一次。</p>
+<p><img src="https://github.com/linxt20/blog_img/blob/master/asof_problem_in_multiseries_aligned/concat_oneshot_vs_pairwise.png?raw=true" alt="concat 一次性 vs pairwise 累积"></p>
+<h2 id="简单结论"><a href="#简单结论" class="headerlink" title="简单结论"></a>简单结论</h2><ul>
+<li><code>merge_asof</code> 不支持 N-ary，链式累积调用在多序列对齐场景下复杂度从线性退化到平方；当待对齐序列数较多（≥10）时，<strong>用 <code>np.searchsorted</code> 自己手写一次多路对齐是简单且明显更快的方案</strong>。<code>merge</code> &#x2F; <code>join</code> 的 pairwise 累积写法存在同样的问题。</li>
+<li><code>concat</code> 虽然支持多参数，但<strong>一定要一次性传 list，不要写成循环里两两拼</strong>——这是 pandas 文档里反复提醒的常见陷阱，实测在拼接 100 段时差异可达 30 倍以上。</li>
+<li>工程上更一般的教训：当一个 API 是「两两」语义、而你的数据是「一组」语义时，先停下来想想累积调用会不会带来 $O(M^2)$ 的隐性开销，必要时绕过 API 在 NumPy 层做一次性的批量计算。</li>
+</ul>
+<p>本文测试运行环境：Windows + CPython 3.x，<code>pandas==2.3.3</code>，<code>numpy==2.2.6</code>。结果会因机器和 pandas 版本略有波动，但量级和趋势是稳定的。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://pandas.pydata.org/docs/reference/api/pandas.merge_asof.html">pandas merge_asof 官方文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://geek-docs.com/pandas/pandas-dataframe/pandas-merge_asof-function-in-python.html">Geek Docs - pandas merge_asof</a></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://linxt20.github.io">狄仁杰七号</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://linxt20.github.io/2025/07/15/asof_problem_in%20multiseries_aligned/">https://linxt20.github.io/2025/07/15/asof_problem_in%20multiseries_aligned/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://linxt20.github.io" target="_blank">Drenj7's blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/timeseries/">timeseries</a></div><div class="post_share"><div class="social-share" data-image="https://github.com/linxt20/blog_img/blob/master/cover/cover11.jpg?raw=true" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2025/03/23/git_note/"><img class="next-cover" src="https://github.com/linxt20/blog_img/blob/master/cover/cover01.jpg?raw=true" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">git基础指令学习笔记</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/Drenj7avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">狄仁杰七号</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">12</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/linxt20"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">咕咕咕，博主正在努力更新中...</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#merge-asof-%E6%8E%A5%E5%8F%A3%E5%9B%9E%E9%A1%BE"><span class="toc-number">2.</span> <span class="toc-text">merge_asof 接口回顾</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E6%A0%B7%E5%86%99%E4%BC%9A%E6%85%A2"><span class="toc-number">3.</span> <span class="toc-text">为什么这样写会慢</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E7%A7%8D%E6%9C%B4%E7%B4%A0%E7%9A%84%E5%A4%9A%E8%B7%AF%E5%AF%B9%E9%BD%90%E5%AE%9E%E7%8E%B0"><span class="toc-number">4.</span> <span class="toc-text">一种朴素的多路对齐实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94"><span class="toc-number">5.</span> <span class="toc-text">性能对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#concat-%E4%B9%9F%E6%9C%89%E5%90%8C%E6%A0%B7%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">6.</span> <span class="toc-text">concat 也有同样的问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E7%BB%93%E8%AE%BA"><span class="toc-number">7.</span> <span class="toc-text">简单结论</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">8.</span> <span class="toc-text">参考</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/07/15/asof_problem_in%20multiseries_aligned/" title="merge_asof 在多序列对齐下的效率问题"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover11.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="merge_asof 在多序列对齐下的效率问题"/></a><div class="content"><a class="title" href="/2025/07/15/asof_problem_in%20multiseries_aligned/" title="merge_asof 在多序列对齐下的效率问题">merge_asof 在多序列对齐下的效率问题</a><time datetime="2025-07-15T04:00:00.000Z" title="发表于 2025-07-15 12:00:00">2025-07-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/23/git_note/" title="git基础指令学习笔记"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover01.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="git基础指令学习笔记"/></a><div class="content"><a class="title" href="/2025/03/23/git_note/" title="git基础指令学习笔记">git基础指令学习笔记</a><time datetime="2025-03-23T08:21:16.123Z" title="发表于 2025-03-23 16:21:16">2025-03-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/23/hexo_butter_note/" title="hexo的butterfly主题配置笔记"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover03.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="hexo的butterfly主题配置笔记"/></a><div class="content"><a class="title" href="/2025/03/23/hexo_butter_note/" title="hexo的butterfly主题配置笔记">hexo的butterfly主题配置笔记</a><time datetime="2025-03-23T08:21:16.123Z" title="发表于 2025-03-23 16:21:16">2025-03-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/03/23/how_to_use_icon/" title="hexo butterfly中使用Font Awesome V5的icon图标"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover02.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="hexo butterfly中使用Font Awesome V5的icon图标"/></a><div class="content"><a class="title" href="/2025/03/23/how_to_use_icon/" title="hexo butterfly中使用Font Awesome V5的icon图标">hexo butterfly中使用Font Awesome V5的icon图标</a><time datetime="2025-03-23T08:21:16.123Z" title="发表于 2025-03-23 16:21:16">2025-03-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/07/07/THU-embedded-guide-Part2-3/" title="THU-2023年春嵌入式课程实验指南——大作业Part2-3"><img src="https://github.com/linxt20/blog_img/blob/master/cover/cover08.jpg?raw=true" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="THU-2023年春嵌入式课程实验指南——大作业Part2-3"/></a><div class="content"><a class="title" href="/2023/07/07/THU-embedded-guide-Part2-3/" title="THU-2023年春嵌入式课程实验指南——大作业Part2-3">THU-2023年春嵌入式课程实验指南——大作业Part2-3</a><time datetime="2023-07-06T17:39:47.000Z" title="发表于 2023-07-07 01:39:47">2023-07-07</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://github.com/linxt20/blog_img/blob/master/cover/cover11.jpg?raw=true')"><div id="footer-wrap"><div class="copyright">&copy;2021 - 2026 By 狄仁杰七号</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function addGitalkSource () {
+  const ele = document.createElement('link')
+  ele.rel = 'stylesheet'
+  ele.href= 'https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css'
+  document.getElementsByTagName('head')[0].appendChild(ele)
+}
+
+function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: 'a87b382d981e2f61ed82',
+      clientSecret: '5b37507de47d283cab4659111e11b1794c0e7451',
+      repo: 'linxt20.github.io',
+      owner: 'linxt20',
+      admin: ['linxt20'],
+      id: '97ff788a2931d93c89d5529be3287cf5',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    addGitalkSource()
+    getScript('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.innerHTML= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !true) {
+  if (true) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/fireworks.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body></html>
