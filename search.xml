@@ -4,6 +4,39 @@
   
     
     <entry>
+      <title>VSCode 登录 GitHub 失败（url handler）：Settings Sync 污染后的 Mac 彻底清理</title>
+      <link href="/2026/05/20/vscode-github-auth-url-handler-mac/"/>
+      <url>/2026/05/20/vscode-github-auth-url-handler-mac/</url>
+      
+        <content type="html"><![CDATA[<div class="note warning modern"><p>本文只针对 macOS。Windows &#x2F; Linux 的路径不同，但思路（卸 App → 清用户配置 → 清缓存 → 清钥匙串 &#x2F; Credential Manager → 重装）是一样的。</p></div><h1 id="问题现象"><a href="#问题现象" class="headerlink" title="问题现象"></a>问题现象</h1><p>在 Mac 上的 VSCode 里点 “Sign in with GitHub”，浏览器会跳到 GitHub 的授权页。我在浏览器里已经登录好账号、点了页面上的 “Open Visual Studio Code”，浏览器也确实唤起了 VSCode，但回到 VSCode 之后弹出的不是”登录成功”，而是这个：</p><blockquote><p>You have not yet finished authorizing this extension to use GitHub. Would you like to try a different way? (url handler)</p><p>Source: GitHub Authentication</p></blockquote><p>点 Yes 让它换一种方式（device flow、token 之类）也照样过不去，反复试都是同一个弹窗。这个报错很有迷惑性：看名字像是 URL handler 注册有问题，但实际请求一路都打到了 GitHub、浏览器也确实把回调交还给了 VSCode，问题出在 VSCode 本地对回调的接收状态上。</p><h1 id="触发原因"><a href="#触发原因" class="headerlink" title="触发原因"></a>触发原因</h1><p>回头看，这台 Mac 是台备用机，平时几乎不开。这次开机后我顺手点了 GitHub 账户菜单里的 “Turn on Settings Sync”，把另外一台主力机的配置（settings、keybindings、扩展列表，以及——关键的——一些和身份认证相关的本地状态）拉了下来。Sync 不只是同步用户设置，它还会让本地的认证&#x2F;会话状态、扩展安装顺序、URL handler 注册顺序进入一个和原机器不完全一致的中间态。在备用机本身就已经装过 Insiders &#x2F; 旧版本 &#x2F; Cursor 等同样抢 <code>vscode://</code> 协议的程序时，这一拉就足以让 GitHub Authentication 扩展拿不回浏览器抛过来的 token。</p><p>我试过的”轻量”方案——退出登录重试、删 <code>~/.vscode</code> 单个扩展目录、改默认浏览器、禁用 Settings Sync、reload window——都没用。最终选择直接走”彻底卸载 + 重装”。</p><h1 id="解决方案：在-Mac-上彻底卸掉-VSCode"><a href="#解决方案：在-Mac-上彻底卸掉-VSCode" class="headerlink" title="解决方案：在 Mac 上彻底卸掉 VSCode"></a>解决方案：在 Mac 上彻底卸掉 VSCode</h1><p>先说一句最关键的：把 VSCode 从”应用程序”拖到废纸篓，或者用任何”普通卸载”的方式，都不能解决这个问题。原因很直接——这次出错的根本原因是本地状态里某一处被 Sync 污染了，但具体是 <code>Application Support/Code/User</code> 里的某个 JSON、是 <code>HTTPStorages</code> 里的 cookie、是 <code>WebKit</code> 里某个 IndexedDB、是 <code>Saved Application State</code> 里的窗口&#x2F;会话快照，还是钥匙串里残留的 GitHub OAuth token，无法事先判定，也没有合适的诊断接口可以一个个排除。普通卸载只会删掉 <code>/Applications/Visual Studio Code.app</code>，上面这些”用户域 + 系统域”的脏数据原封不动留在磁盘上，重装回来照样复现报错。所以这里没有捷径，只能一次性把”所有可能保留状态的位置”全部清空，让下一次启动是真正意义上的”全新安装”。</p><p>先 <code>Cmd + Q</code> 完全退出 VSCode（不是关窗口，是退出进程），然后在终端依次执行下面这一段。它会删掉应用本体、所有用户配置、所有扩展、所有缓存、所有日志和应用状态、所有协议&#x2F;网络相关的本地存储，以及命令行入口 <code>code</code>，不会动你的项目代码（除非你的代码恰好放在这些目录里）。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 删 App 本体</span></span><br><span class="line"><span class="built_in">rm</span> -rf <span class="string">&quot;/Applications/Visual Studio Code.app&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 用户数据 + 扩展</span></span><br><span class="line"><span class="built_in">rm</span> -rf <span class="string">&quot;<span class="variable">$HOME</span>/Library/Application Support/Code&quot;</span></span><br><span class="line"><span class="built_in">rm</span> -rf <span class="string">&quot;<span class="variable">$HOME</span>/.vscode&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 缓存 / 日志 / 应用状态</span></span><br><span class="line"><span class="built_in">rm</span> -rf <span class="string">&quot;<span class="variable">$HOME</span>/Library/Caches/com.microsoft.VSCode&quot;</span></span><br><span class="line"><span class="built_in">rm</span> -rf <span class="string">&quot;<span class="variable">$HOME</span>/Library/Caches/com.microsoft.VSCode.ShipIt&quot;</span></span><br><span class="line"><span class="built_in">rm</span> -rf <span class="string">&quot;<span class="variable">$HOME</span>/Library/Logs/Code&quot;</span></span><br><span class="line"><span class="built_in">rm</span> -rf <span class="string">&quot;<span class="variable">$HOME</span>/Library/Saved Application State/com.microsoft.VSCode.savedState&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 偏好、HTTP/WebKit 本地存储（URL handler / Cookie / 登录态都在这里）</span></span><br><span class="line"><span class="built_in">rm</span> -rf <span class="string">&quot;<span class="variable">$HOME</span>/Library/Preferences/com.microsoft.VSCode.plist&quot;</span></span><br><span class="line"><span class="built_in">rm</span> -rf <span class="string">&quot;<span class="variable">$HOME</span>/Library/HTTPStorages/com.microsoft.VSCode&quot;</span></span><br><span class="line"><span class="built_in">rm</span> -rf <span class="string">&quot;<span class="variable">$HOME</span>/Library/WebKit/com.microsoft.VSCode&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 5. 命令行入口</span></span><br><span class="line"><span class="built_in">rm</span> -f /usr/local/bin/code</span><br><span class="line"><span class="built_in">rm</span> -f /opt/homebrew/bin/code</span><br></pre></td></tr></table></figure><p>执行到第 5 步如果看到 <code>rm: /usr/local/bin/code: Permission denied</code>，是因为 <code>/usr/local/bin/</code> 需要管理员权限，加 <code>sudo</code> 再来一次即可：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="built_in">rm</span> -f /usr/local/bin/code</span><br></pre></td></tr></table></figure><p>输密码时终端不回显是正常的。删完用 <code>ls -l /usr/local/bin/code</code> 验证显示 <code>No such file or directory</code> 就干净了。这一步其实可有可无——<code>code</code> 只是个软链入口，不影响 App 本身，重装时会覆盖。</p><h1 id="钥匙串里的残留要手动清"><a href="#钥匙串里的残留要手动清" class="headerlink" title="钥匙串里的残留要手动清"></a>钥匙串里的残留要手动清</h1><p>上面那段命令删的是 VSCode 自己的文件，但 GitHub 登录态还有一份在 macOS 钥匙串（Keychain）里，VSCode 卸了它也不会自动消失。这才是导致重装后仍然”似乎已登录但又失败”的最大祸根。手动清的步骤：打开 <em>钥匙串访问</em> → 在搜索框依次搜 <code>vscode</code> &#x2F; <code>Visual Studio Code</code> &#x2F; <code>GitHub</code> &#x2F; <code>github.com</code>，把明显属于 VSCode 或 GitHub Authentication 的”密码”类条目删掉。不要碰系统证书或 Apple 自己的条目。</p><p>清完钥匙串之后强烈建议重启一次 Mac。macOS 的 URL handler 注册、LaunchServices 数据库、后台 XPC 服务都会缓存一段状态，不重启的话有概率重装后仍然把 <code>vscode://</code> 回调派发到一个已经不存在的旧实例上。</p><h1 id="重装与开-Sync-的顺序"><a href="#重装与开-Sync-的顺序" class="headerlink" title="重装与开 Sync 的顺序"></a>重装与开 Sync 的顺序</h1><p>去官网下载 Stable 版重新装，第一次打开后先什么都别同步，按下面顺序来：先登录 GitHub 账户，确认弹出的浏览器授权页能正常回到 VSCode、左下角账号头像变成你本人；然后再考虑打开 Settings Sync，并且打开时建议先不要勾 Extensions，等用一段时间 GitHub 登录稳定不再掉之后再开。</p><p>这个顺序的目的是把”登录”和”同步”两件事解耦：登录走的是干净的全新本地状态，不会被任何同步下来的旧 session 干扰；等登录站稳了再打开同步，万一同步又把状态搞乱也能很快定位是 Sync 引入的问题，而不是登录本身。</p><h1 id="一个延伸的坑"><a href="#一个延伸的坑" class="headerlink" title="一个延伸的坑"></a>一个延伸的坑</h1><p>如果这台 Mac 上同时装过 VSCode Insiders、VSCodium、Cursor 这几个 fork，它们都会注册 <code>vscode://</code> 或自己的同族协议。LaunchServices 会按”最近注册”的顺序决定谁来接管回调，理论上不冲突，但实践中遇到过 GitHub Authentication 把回调交给了错版本然后报同样的 url handler 错。如果按上面步骤清完仍然有问题，下一步就是检查这些 fork 的 URL handler 注册情况（<code>/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -dump | grep -i vscode</code>），把不需要的版本也卸掉再试。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 技术 </category>
+          
+          <category> vscode </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> vscode </tag>
+            
+            <tag> github </tag>
+            
+            <tag> mac </tag>
+            
+            <tag> settings-sync </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>第三方 AI API 平台汇总：订阅制 vs 实时流量制</title>
       <link href="/2026/05/09/third_party_api_platforms/"/>
       <url>/2026/05/09/third_party_api_platforms/</url>
@@ -95,6 +128,33 @@
     
     
     <entry>
+      <title>git基础指令学习笔记</title>
+      <link href="/2025/03/23/git_note/"/>
+      <url>/2025/03/23/git_note/</url>
+      
+        <content type="html"><![CDATA[<div class="note info modern"><p>这部分只是记录作者自己不大熟练的git指令操作，如果需要详细的git操作教程，请自行百度</p></div><h1 id="基础操作"><a href="#基础操作" class="headerlink" title="基础操作"></a>基础操作</h1><p>几个基础的指令就不写了<br>一个基础知识：pull &#x3D; fetch + merge</p><p>clone add commit push pull 这几个指令使用vscode的git界面进行操作更加方便快速</p><h1 id="版本跳跃"><a href="#版本跳跃" class="headerlink" title="版本跳跃"></a>版本跳跃</h1><p>vscode的git似乎在版本回退上操作不大方便，可能是我不大会使用，这里直接记录版本跳跃的git指令</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git reflog // 查看所有的版本索引号</span><br><span class="line">git reset --hard // 版本索引号，可以前进也可以回退</span><br><span class="line">// 如果想要修改版本之后进行强制提交覆盖github上的内容，可以使用</span><br><span class="line">git push -f origin &lt;branch-name&gt;</span><br></pre></td></tr></table></figure><h1 id="版本比较"><a href="#版本比较" class="headerlink" title="版本比较"></a>版本比较</h1><p>vscode的版本比较的直观，但是似乎没法将本地库中的历史版本与当前版本进行比较，这里记录一下</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git diff [文件名] 将工作区中的文件和暂存区进行比较</span><br><span class="line">git diff [本地库中的历史版本] [文件名] 将工作区中的文件与本地库历史记录比较</span><br><span class="line">不指定文件名将会将工作区的所有文件都进行比较</span><br></pre></td></tr></table></figure><h1 id="分支操作"><a href="#分支操作" class="headerlink" title="分支操作"></a>分支操作</h1><p>vscode的git管理界面能够查看创建以及切换分支</p><p>如果在git bash中则使用一下指令</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git branch -v 查看所有的分支以及当前在哪个分支上</span><br><span class="line">git branch [分支名称] 创建新的分支</span><br><span class="line">git checkout [分支名称] 切换到目标分支</span><br><span class="line">git checkout -b [分支名称] 创建并切换到目标分支</span><br><span class="line">git merge [分支名称] 将目标分支合并到当前所在的分支上 如果出现冲突，需要修改之后，add后commit</span><br></pre></td></tr></table></figure><h1 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h1><p>这部分第一次学习，做一个记录，平时似乎很少用到</p><h2 id="创建标签"><a href="#创建标签" class="headerlink" title="创建标签"></a>创建标签</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git tag &lt;name&gt; 给当前的分支附上标签名</span><br><span class="line">git tag -a &lt;name&gt; -m &quot;introduction&quot; 附上标签名的同时加上描述，描述在git show展示</span><br><span class="line">git tag 查看所有的标签</span><br><span class="line">git tag &lt;name&gt; &lt;id&gt; 给id分支附上标签名</span><br><span class="line">git show &lt;tagname&gt; 查看tagname标签的信息</span><br></pre></td></tr></table></figure><h2 id="标签操作"><a href="#标签操作" class="headerlink" title="标签操作"></a>标签操作</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git push origin &lt;tagname&gt;可以推送一个本地标签；</span><br><span class="line">git push origin --tags可以推送全部未推送过的本地标签；</span><br><span class="line">git tag -d &lt;tagname&gt;可以删除一个本地标签；</span><br><span class="line">git push origin :refs/tags/&lt;tagname&gt;可以删除一个远程标签。</span><br></pre></td></tr></table></figure><h1 id="远程仓库"><a href="#远程仓库" class="headerlink" title="远程仓库"></a>远程仓库</h1><h2 id="邀请队友"><a href="#邀请队友" class="headerlink" title="邀请队友"></a>邀请队友</h2><p>github项目仓库的setting中cooperation，输入队友账号即可</p><h2 id="跨团队协作"><a href="#跨团队协作" class="headerlink" title="跨团队协作"></a>跨团队协作</h2><p>fork队员在pull request中点击new pull request,created pull request,view pull request<br>项目队长在pull request中点击目标request<br>(团队间直接在github赋予权限就可以直接clone和pull、push)</p><h2 id="白名单"><a href="#白名单" class="headerlink" title="白名单"></a>白名单</h2><p>.gitignore<br>常见白名单：<br>图片文件缩略图文件 *.ini<br>python文件的编译文件 *.py[cod] *.so *.egg *.egg-info dist build</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git check-ignore -v App.class 检查指定文件是由于哪行规则而进入白名单的</span><br></pre></td></tr></table></figure><p>不排除.gitignore和App.class的白名单写法:</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">!.gitignore</span><br><span class="line">!App.class</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> 技术 </category>
+          
+          <category> git </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> git </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>hexo的butterfly主题配置笔记</title>
       <link href="/2025/03/23/hexo_butter_note/"/>
       <url>/2025/03/23/hexo_butter_note/</url>
@@ -153,33 +213,6 @@
     
     
     <entry>
-      <title>git基础指令学习笔记</title>
-      <link href="/2025/03/23/git_note/"/>
-      <url>/2025/03/23/git_note/</url>
-      
-        <content type="html"><![CDATA[<div class="note info modern"><p>这部分只是记录作者自己不大熟练的git指令操作，如果需要详细的git操作教程，请自行百度</p></div><h1 id="基础操作"><a href="#基础操作" class="headerlink" title="基础操作"></a>基础操作</h1><p>几个基础的指令就不写了<br>一个基础知识：pull &#x3D; fetch + merge</p><p>clone add commit push pull 这几个指令使用vscode的git界面进行操作更加方便快速</p><h1 id="版本跳跃"><a href="#版本跳跃" class="headerlink" title="版本跳跃"></a>版本跳跃</h1><p>vscode的git似乎在版本回退上操作不大方便，可能是我不大会使用，这里直接记录版本跳跃的git指令</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git reflog // 查看所有的版本索引号</span><br><span class="line">git reset --hard // 版本索引号，可以前进也可以回退</span><br><span class="line">// 如果想要修改版本之后进行强制提交覆盖github上的内容，可以使用</span><br><span class="line">git push -f origin &lt;branch-name&gt;</span><br></pre></td></tr></table></figure><h1 id="版本比较"><a href="#版本比较" class="headerlink" title="版本比较"></a>版本比较</h1><p>vscode的版本比较的直观，但是似乎没法将本地库中的历史版本与当前版本进行比较，这里记录一下</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git diff [文件名] 将工作区中的文件和暂存区进行比较</span><br><span class="line">git diff [本地库中的历史版本] [文件名] 将工作区中的文件与本地库历史记录比较</span><br><span class="line">不指定文件名将会将工作区的所有文件都进行比较</span><br></pre></td></tr></table></figure><h1 id="分支操作"><a href="#分支操作" class="headerlink" title="分支操作"></a>分支操作</h1><p>vscode的git管理界面能够查看创建以及切换分支</p><p>如果在git bash中则使用一下指令</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git branch -v 查看所有的分支以及当前在哪个分支上</span><br><span class="line">git branch [分支名称] 创建新的分支</span><br><span class="line">git checkout [分支名称] 切换到目标分支</span><br><span class="line">git checkout -b [分支名称] 创建并切换到目标分支</span><br><span class="line">git merge [分支名称] 将目标分支合并到当前所在的分支上 如果出现冲突，需要修改之后，add后commit</span><br></pre></td></tr></table></figure><h1 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h1><p>这部分第一次学习，做一个记录，平时似乎很少用到</p><h2 id="创建标签"><a href="#创建标签" class="headerlink" title="创建标签"></a>创建标签</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git tag &lt;name&gt; 给当前的分支附上标签名</span><br><span class="line">git tag -a &lt;name&gt; -m &quot;introduction&quot; 附上标签名的同时加上描述，描述在git show展示</span><br><span class="line">git tag 查看所有的标签</span><br><span class="line">git tag &lt;name&gt; &lt;id&gt; 给id分支附上标签名</span><br><span class="line">git show &lt;tagname&gt; 查看tagname标签的信息</span><br></pre></td></tr></table></figure><h2 id="标签操作"><a href="#标签操作" class="headerlink" title="标签操作"></a>标签操作</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git push origin &lt;tagname&gt;可以推送一个本地标签；</span><br><span class="line">git push origin --tags可以推送全部未推送过的本地标签；</span><br><span class="line">git tag -d &lt;tagname&gt;可以删除一个本地标签；</span><br><span class="line">git push origin :refs/tags/&lt;tagname&gt;可以删除一个远程标签。</span><br></pre></td></tr></table></figure><h1 id="远程仓库"><a href="#远程仓库" class="headerlink" title="远程仓库"></a>远程仓库</h1><h2 id="邀请队友"><a href="#邀请队友" class="headerlink" title="邀请队友"></a>邀请队友</h2><p>github项目仓库的setting中cooperation，输入队友账号即可</p><h2 id="跨团队协作"><a href="#跨团队协作" class="headerlink" title="跨团队协作"></a>跨团队协作</h2><p>fork队员在pull request中点击new pull request,created pull request,view pull request<br>项目队长在pull request中点击目标request<br>(团队间直接在github赋予权限就可以直接clone和pull、push)</p><h2 id="白名单"><a href="#白名单" class="headerlink" title="白名单"></a>白名单</h2><p>.gitignore<br>常见白名单：<br>图片文件缩略图文件 *.ini<br>python文件的编译文件 *.py[cod] *.so *.egg *.egg-info dist build</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git check-ignore -v App.class 检查指定文件是由于哪行规则而进入白名单的</span><br></pre></td></tr></table></figure><p>不排除.gitignore和App.class的白名单写法:</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">!.gitignore</span><br><span class="line">!App.class</span><br></pre></td></tr></table></figure>]]></content>
-      
-      
-      <categories>
-          
-          <category> 技术 </category>
-          
-          <category> git </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> git </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>远程 Linux 复用本地代理：SSH 隧道 + 环境变量</title>
       <link href="/2023/09/15/linux-proxy-via-ssh-tunnel/"/>
       <url>/2023/09/15/linux-proxy-via-ssh-tunnel/</url>
@@ -198,11 +231,11 @@
       
         <tags>
             
-            <tag> 代理 </tag>
-            
             <tag> linux </tag>
             
             <tag> ssh </tag>
+            
+            <tag> 代理 </tag>
             
         </tags>
       
@@ -447,9 +480,9 @@
       
         <tags>
             
-            <tag> 代理 </tag>
-            
             <tag> git </tag>
+            
+            <tag> 代理 </tag>
             
         </tags>
       
